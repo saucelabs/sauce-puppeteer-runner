@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/christian-bromann/sauce-wdio-runner#readme",
   "dependencies": {
+    "aws-sdk": "^2.610.0",
     "jest": "^25.1.0",
     "puppeteer": "^2.1.0",
     "webdriverio": "^5.18.6"
