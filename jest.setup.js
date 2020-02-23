@@ -26,8 +26,8 @@ beforeAll(async () => {
   global.sessionId = global.session.sessionId
   console.log('Session started', global.sessionId)
 
-  global.browser = await puppeteer.launch({
-    headless: false
+  global.browser = await puppeteer.connect({
+    browserURL: 'http://localhost:9222'
   })
 
   let lastCommand = Date.now()
