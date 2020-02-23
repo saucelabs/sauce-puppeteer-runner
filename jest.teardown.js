@@ -21,7 +21,7 @@ afterAll(async () => {
     Body: JSON.stringify(global.logs, null, 4)
   };
   
-  console.log(`Update log file: cb-onboarding/${global.sessionId}/log.json`);
+  console.log(`Update ${global.logs.length} log entries to: cb-onboarding/${global.sessionId}/log.json`);
   await promisify(s3.upload.bind(s3))(params).then(
     () => console.log('upload successful'),
     (e) => console.log('upload failed:', e.stack)
