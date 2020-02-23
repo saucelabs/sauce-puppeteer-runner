@@ -28,10 +28,10 @@ beforeAll(async () => {
   global.sessionId = global.session.sessionId
   console.log('Session started', global.sessionId)
 
-  console.log(process.env.SAUCE_USERNAME);
   global.browser = await puppeteer.connect({
-    browserURL: 'http://localhost:9222'
+    browserURL: 'http://0.0.0.0:9222'
   })
+  console.log('Puppeteer started')
 
   let lastCommand = Date.now()
   debug.log = (...args) => {

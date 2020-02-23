@@ -4,7 +4,7 @@
   "description": "Sauce Labs WDIO Test Runner",
   "main": "index.js",
   "scripts": {
-    "test": "jest --config=jest.config.js"
+    "test": "sleep 5 && jest --config=jest.config.js"
   },
   "repository": {
     "type": "git",
