@@ -22,6 +22,9 @@ afterAll(async () => {
   };
   
   console.log(`Update log file: cb-onboarding/${global.sessionId}/log.json`);
-  await promisify(s3.upload.bind(s3))(params)
+  await promisify(s3.upload.bind(s3))(params).then(
+    () => console.log('upload successful'),
+    (e) => console.log('upload failed:', e.stack)
+  )
   console.log('Done!')
 });
