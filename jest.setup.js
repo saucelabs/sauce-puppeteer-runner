@@ -1,5 +1,5 @@
 const fs = require('fs')
-const puppeteer = require('puppeteer')
+const puppeteer = require('puppeteer-core')
 const debug = require('debug')
 const ansiRegex = require('ansi-regex')
 const { remote } = require('webdriverio')
