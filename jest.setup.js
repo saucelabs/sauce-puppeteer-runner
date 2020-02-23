@@ -19,13 +19,16 @@ beforeAll(async () => {
       browserVersion: 'latest',
       platformName: 'Windows 10',
       'sauce:options': {
-        name: 'Puppeteer Test'
+        name: 'Feature XYZ',
+        tags: ['e2e', 'release team', 'other tag'],
+        build: `Release 9336016ecec3d3ae30cfedfa212c574658ee8c06`
       }
     }
   })
   global.sessionId = global.session.sessionId
   console.log('Session started', global.sessionId)
 
+  console.log(process.env.SAUCE_USERNAME);
   global.browser = await puppeteer.connect({
     browserURL: 'http://localhost:9222'
   })
