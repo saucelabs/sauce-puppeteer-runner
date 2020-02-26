@@ -19,6 +19,6 @@
   "dependencies": {
     "jest": "^25.1.0",
     "puppeteer-core": "^2.1.0",
-    "saucelabs": "^3.1.1"
+    "saucelabs": "^3.1.1-alpha.1"
   }
 }

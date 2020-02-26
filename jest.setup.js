@@ -2,7 +2,7 @@ const fs = require('fs')
 const puppeteer = require('puppeteer-core')
 const debug = require('debug')
 const ansiRegex = require('ansi-regex')
-const SauceLabs = require('saucelabs')
+const SauceLabs = require('saucelabs').default
 
 global.logs = []
 global.isDone = false
