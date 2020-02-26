@@ -2,32 +2,32 @@ const fs = require('fs')
 const puppeteer = require('puppeteer-core')
 const debug = require('debug')
 const ansiRegex = require('ansi-regex')
-const { remote } = require('webdriverio')
+const SauceLabs = require('saucelabs')
 
 global.logs = []
 global.isDone = false
 
-jest.setTimeout(20000)
+jest.setTimeout(60000)
+
+global.api = new SauceLabs({
+  user: process.env.SAUCE_USERNAME,
+  key: process.env.SAUCE_ACCESS_KEY,
+})
 
 beforeAll(async () => {
-  global.session = await remote({
-    user: process.env.SAUCE_USERNAME,
-    key: process.env.SAUCE_ACCESS_KEY,
-    logLevel: 'error',
+  console.log('Create job shell')
+  const job = await global.api.createJob({
+    name: 'A Puppeteer Test',
     capabilities: {
-      browserName: 'chrome',
-      browserVersion: 'latest',
-      platformName: 'Windows 10',
-      'sauce:options': {
-        name: 'Feature XYZ',
-        tags: ['e2e', 'release team', 'other tag'],
-        build: `Release 9336016ecec3d3ae30cfedfa212c574658ee8c06`
-      }
+      browserName: 'Chrome',
+      platformName: 'MacOS 10.15',
+      browserVersion: '77'
     }
   })
-  global.sessionId = global.session.sessionId
-  console.log('Session started', global.sessionId)
+  global.sessionId = job.id
+  console.log(`Created job shell with session id ${job.id}`)
 
+  console.log('Start Puppeteer')
   global.browser = await puppeteer.connect({
     browserURL: 'http://0.0.0.0:9222'
   })
