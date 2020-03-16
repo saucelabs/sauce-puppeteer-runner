@@ -1,10 +1,12 @@
 {
-  "name": "sauce-wdio-runner",
+  "name": "sauce-puppeteer-runner",
   "version": "0.0.0",
   "description": "Sauce Labs WDIO Test Runner",
   "main": "index.js",
   "scripts": {
-    "test": "sleep 5 && jest --config=jest.config.js"
+    "build": "docker build -t saucelabs/${npm_package_name}:latest --cache-from saucelabs/${npm_package_name}:latest .",
+    "test": "sleep 5 && jest --config=jest.config.js",
+    "start": "docker run --env SAUCE_USERNAME --env SAUCE_ACCESS_KEY -d saucelabs/${npm_package_name}:latest"
   },
   "repository": {
     "type": "git",
@@ -19,6 +21,6 @@
   "dependencies": {
     "jest": "^25.1.0",
     "puppeteer-core": "^2.1.0",
-    "saucelabs": "^3.1.1-alpha.1"
+    "saucelabs": "orchestrator-experiment"
   }
 }

@@ -12,6 +12,8 @@ jest.setTimeout(60000)
 global.api = new SauceLabs({
   user: process.env.SAUCE_USERNAME,
   key: process.env.SAUCE_ACCESS_KEY,
+  region: 'staging',
+  tld: 'net'
 })
 
 beforeAll(async () => {
@@ -28,8 +30,9 @@ beforeAll(async () => {
   console.log(`Created job shell with session id ${job.id}`)
 
   console.log('Start Puppeteer')
-  global.browser = await puppeteer.connect({
-    browserURL: 'http://0.0.0.0:9222'
+  global.browser = await puppeteer.launch({
+    executablePath: '/usr/bin/google-chrome-stable',
+    headless: true
   })
   console.log('Puppeteer started')
 
