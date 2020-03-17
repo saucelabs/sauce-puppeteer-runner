@@ -1,3 +1,5 @@
 #!/bin/sh
 
+cp $2 ./tests/
 npm test
+rm ./tests/*.js
