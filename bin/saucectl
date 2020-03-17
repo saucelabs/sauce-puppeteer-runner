@@ -1,8 +1,10 @@
 #!/bin/sh
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REAL_PATH="$(which $0)"
+DIR="$(dirname $REAL_PATH)"
 ROOT="$DIR/.."
 
+cd $ROOT
 cp $2 "$ROOT/tests/"
 npm test
 rm "$ROOT/tests/$(basename $2)"
