@@ -1,5 +1,8 @@
 #!/bin/sh
 
-cp $2 ./tests/
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT="$DIR/.."
+
+cp $2 "$ROOT/tests/"
 npm test
-rm ./tests/*.js
+rm "$ROOT/tests/$(basename $2)"
