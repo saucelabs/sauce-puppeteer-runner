@@ -8,8 +8,7 @@ RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | 
   && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
   && nvm install 12
 
-ENV PATH="/home/testrunner/bin:${PATH}" \
-    PATH="/home/seluser/.nvm/versions/node/v12.16.1/bin:${PATH}" \
+ENV PATH="/home/testrunner/bin:/home/seluser/.nvm/versions/node/v12.16.1/bin:${PATH}" \
     CHROME_BINARY_PATH="/usr/bin/google-chrome-stable"
 
 WORKDIR /home/testrunner
