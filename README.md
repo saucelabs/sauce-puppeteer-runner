@@ -16,5 +16,7 @@ $ docker pull saucelabs/sauce-puppeteer-runner:latest
 ## Run
 
 ```sh
+# start container
 $ docker run --env SAUCE_USERNAME --env SAUCE_ACCESS_KEY -d saucelabs/sauce-puppeteer-runner:latest
+# run test
 ```
