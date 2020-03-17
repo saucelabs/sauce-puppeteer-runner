@@ -1,5 +1,3 @@
 #!/bin/sh
 
-cp $1 ./tests/
 npm test
-rm ./tests/*.js
