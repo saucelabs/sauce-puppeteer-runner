@@ -1,4 +1,5 @@
 module.exports = {
   testEnvironment: 'node',
-  setupFilesAfterEnv: ['./jest.setup.js', './jest.teardown.js']
+  setupFilesAfterEnv: ['./src/jest.setup.js', './src/jest.teardown.js'],
+  reporters: ['default', '<rootDir>/src/reporter.js']
 };
