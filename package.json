@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "docker build -t saucelabs/${npm_package_name}:latest --cache-from saucelabs/${npm_package_name}:latest .",
-    "test": "DEBUG=\"puppeteer:*\" jest --config=jest.config.js",
-    "start": "docker run --env SAUCE_USERNAME --env SAUCE_ACCESS_KEY -d saucelabs/${npm_package_name}:latest"
+    "start": "docker run --env SAUCE_USERNAME --env SAUCE_ACCESS_KEY -d saucelabs/${npm_package_name}:latest",
+    "test": "DEBUG=\"puppeteer:*\" jest --config=jest.config.js"
   },
   "repository": {
     "type": "git",
