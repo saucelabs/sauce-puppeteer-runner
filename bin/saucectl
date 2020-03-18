@@ -4,8 +4,8 @@ REAL_PATH="$(which $0)"
 DIR="$(dirname $REAL_PATH)"
 ROOT="$DIR/.."
 
-cp $2 "$ROOT/tests/"
+# cp $2 "$ROOT/tests/"
 cd $ROOT
 npm test
-rm "$ROOT/tests/$(basename $2)"
-cd -1
+# rm "$ROOT/tests/$(basename $2)"
+# cd -1

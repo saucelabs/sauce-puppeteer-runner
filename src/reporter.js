@@ -38,6 +38,12 @@ module.exports = class TestrunnerReporter {
         const hasPassed = numFailedTests === 0
 
         const sessionId = await this.sessionId
+
+        /**
+         * wait a bit to ensure we don't upload before the job has finished
+         */
+        await new Promise((resolve) => setTimeout(resolve, 3000))
+
         const logFilePath = path.join(process.cwd(), '/log.json')
         await Promise.all([
             api.uploadJobAssets(sessionId, [logFilePath]).then(
