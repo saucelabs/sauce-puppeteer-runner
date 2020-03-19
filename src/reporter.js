@@ -6,8 +6,7 @@ const SauceLabs = require('saucelabs').default
 const api = new SauceLabs({
     user: process.env.SAUCE_USERNAME,
     key: process.env.SAUCE_ACCESS_KEY,
-    region: 'staging',
-    tld: 'net'
+    region: 'us-west-1'
 })
 
 module.exports = class TestrunnerReporter {
