@@ -8,4 +8,3 @@ cp -r $2 "$ROOT/tests/"
 cd $ROOT
 npm test
 rm -r "$ROOT/tests/$(basename $2)"
-cd -1
