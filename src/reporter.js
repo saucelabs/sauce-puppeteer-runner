@@ -16,7 +16,6 @@ module.exports = class TestrunnerReporter {
             const session = await remote({
                 user: process.env.SAUCE_USERNAME,
                 key: process.env.SAUCE_ACCESS_KEY,
-                hostname: 'ondemand.staging.saucelabs.net',
                 capabilities: {
                     browserName: 'Chrome',
                     platformName: 'MacOS 10.15',

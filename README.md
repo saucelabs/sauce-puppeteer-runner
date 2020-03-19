@@ -21,7 +21,7 @@ $ docker run --env SAUCE_USERNAME --env SAUCE_ACCESS_KEY -d --name=testrunner sa
 # push file into container
 $ docker cp ./path/to/testfile.test.js testrunner:/home/testrunner/tests
 # run test
-$ docker exec testrunner saucectl run
+$ docker exec testrunner saucectl run /home/testrunner/tests
 # stop container
 $ docker stop testrunner
 ```
