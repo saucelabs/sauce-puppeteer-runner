@@ -1,7 +1,12 @@
 const path = require('path')
 
-const { remote } = require('webdriverio')
+const logger = require('@wdio/logger').default
 const SauceLabs = require('saucelabs').default
+const { remote } = require('webdriverio')
+
+const { exec } = require('./utils')
+
+const log = logger('reporter')
 
 const api = new SauceLabs({
     user: process.env.SAUCE_USERNAME,
@@ -11,11 +16,12 @@ const api = new SauceLabs({
 
 module.exports = class TestrunnerReporter {
     constructor () {
-        console.log('Create job shell')
+        log.info('Create job shell')
         this.sessionId = (async () => {
             const session = await remote({
                 user: process.env.SAUCE_USERNAME,
                 key: process.env.SAUCE_ACCESS_KEY,
+                logLevel: 'error',
                 capabilities: {
                     browserName: 'Chrome',
                     platformName: 'MacOS 10.15',
@@ -25,10 +31,15 @@ module.exports = class TestrunnerReporter {
                     }
                 }
             })
-            console.log(`Created job shell with session id ${session.sessionId}`)
+            log.info(`Created job shell with session id ${session.sessionId}`)
             await session.deleteSession()
             return session.sessionId
         })()
+    }
+
+    async onRunStart () {
+        log.info('Start video capturing')
+        await exec('start-video')
     }
 
     async onRunComplete (test, { testResults, numFailedTests }) {
@@ -40,7 +51,10 @@ module.exports = class TestrunnerReporter {
         /**
          * wait a bit to ensure we don't upload before the job has finished
          */
-        await new Promise((resolve) => setTimeout(resolve, 3000))
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
+        log.info('Stop video capturing')
+        await exec('stop-video')
 
         const logFilePath = path.join(process.cwd(), '/log.json')
         await Promise.all([
@@ -48,11 +62,12 @@ module.exports = class TestrunnerReporter {
                 sessionId,
                 [
                     logFilePath,
-                    '/home/seluser/videos/video.mp4'
+                    '/home/seluser/videos/video.mp4',
+                    '/home/seluser/docker.log'
                 ]
             ).then(
-                () => console.log('upload successful'),
-                (e) => console.log('upload failed:', e.stack)
+                () => log.info('upload successful'),
+                (e) => log.error('upload failed:', e.stack)
             ),
             api.updateJob(process.env.SAUCE_USERNAME, sessionId, {
                 name: filename,
@@ -60,6 +75,6 @@ module.exports = class TestrunnerReporter {
             })
         ])
 
-        console.log('Done!')
+        log.info('Finished testrun!')
     }
 }

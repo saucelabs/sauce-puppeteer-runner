@@ -9,7 +9,8 @@ RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | 
   && nvm install 12
 
 ENV PATH="/home/testrunner/bin:/home/seluser/.nvm/versions/node/v12.16.1/bin:${PATH}" \
-    CHROME_BINARY_PATH="/usr/bin/google-chrome-stable"
+    CHROME_BINARY_PATH="/usr/bin/google-chrome-stable" \
+    WDIO_LOG_PATH="/home/seluser/docker.log"
 
 WORKDIR /home/testrunner
 COPY . .

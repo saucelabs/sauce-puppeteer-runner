@@ -7,7 +7,7 @@
     "build": "docker build -t saucelabs/${npm_package_name}:latest --cache-from saucelabs/${npm_package_name}:latest .",
     "docker:push": "docker push saucelabs/${npm_package_name}:latest",
     "start": "docker run --env SAUCE_USERNAME --env SAUCE_ACCESS_KEY -d saucelabs/${npm_package_name}:latest",
-    "test": "DISPLAY=\"$(cat DISPLAY)\" DEBUG=\"puppeteer:*\" jest --config=jest.config.js"
+    "test": "DISPLAY=\"$(cat DISPLAY)\" DEBUG=\"puppeteer:*\" jest --config=./.config/jest.config.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/christian-bromann/sauce-wdio-runner#readme",
   "dependencies": {
+    "@wdio/logger": "^5.16.10",
     "jest": "^25.1.0",
     "puppeteer-core": "^2.1.0",
     "saucelabs": "orchestrator-experiment",

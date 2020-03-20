@@ -107,3 +107,4 @@ dist
 # JS files
 /*.js
 !jest.config.js
+/tests/**/*.js

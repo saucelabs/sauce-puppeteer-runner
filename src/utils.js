@@ -1,8 +1,13 @@
+const shell = require('shelljs')
+const logger = require('@wdio/logger').default
+
+const log = logger('utils')
+
 let lastCommand = Date.now()
 
 global.logs = []
 
-exports.log = (...args) => {
+exports.logHelper = (...args) => {
     const sendString = 'SEND ► '
     const receiveString = '◀ RECV'
 
@@ -22,7 +27,7 @@ exports.log = (...args) => {
                 log.result = response
             }
         } catch (e) {
-            console.log(e)
+            log.error(`Couldn't parse Puppeteer logs: ${e.stack}`)
         }
 
         return
@@ -53,4 +58,19 @@ exports.log = (...args) => {
     })
 
     lastCommand = Date.now()
+}
+
+const COMMAND_TIMEOUT = 5000
+exports.exec = async (expression) => {
+    const cp = shell.exec(expression, { async: true, silent: true })
+    cp.stdout.on('data', (data) => log.info(`${data}`))
+    cp.stderr.on('data', (data) => log.info(`${data}`))
+
+    return new Promise((resolve) => {
+        const timeout = setTimeout(resolve, COMMAND_TIMEOUT)
+        cp.on('close', () => {
+            clearTimeout(timeout)
+            resolve()
+        })
+    })
 }
