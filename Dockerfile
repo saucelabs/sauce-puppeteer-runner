@@ -16,4 +16,11 @@ COPY . .
 RUN sudo chown -R seluser /home/testrunner
 
 RUN npm install
-CMD tail -f /dev/null
+
+#==================
+# ENTRYPOINT & CMD
+#==================
+# IMPORTANT: Using the string form `CMD "entry.sh"` without
+# brackets [] causes Docker to run your process
+# And using `bash` which doesn’t handle signals properly
+CMD ["./entry.sh"]

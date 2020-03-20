@@ -44,7 +44,13 @@ module.exports = class TestrunnerReporter {
 
         const logFilePath = path.join(process.cwd(), '/log.json')
         await Promise.all([
-            api.uploadJobAssets(sessionId, [logFilePath]).then(
+            api.uploadJobAssets(
+                sessionId,
+                [
+                    logFilePath,
+                    '/home/seluser/videos/video.mp4'
+                ]
+            ).then(
                 () => console.log('upload successful'),
                 (e) => console.log('upload failed:', e.stack)
             ),
