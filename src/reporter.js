@@ -6,6 +6,7 @@ const SauceLabs = require('saucelabs').default
 const { remote } = require('webdriverio')
 
 const { exec } = require('./utils')
+const { LOG_FILES } = require('./constants')
 
 const log = logger('reporter')
 
@@ -58,15 +59,15 @@ module.exports = class TestrunnerReporter {
         await exec('stop-video')
 
         const logFilePath = path.join(process.cwd(), '/log.json')
-        const videoPath = '/home/seluser/videos/video.mp4'
-        const hasVideo = fs.existsSync(videoPath)
+        const containterLogFiles = LOG_FILES.filter(
+            (path) => fs.existsSync(path))
+
         await Promise.all([
             api.uploadJobAssets(
                 sessionId,
                 [
                     logFilePath,
-                    '/home/seluser/docker.log',
-                    ...(hasVideo ? [videoPath] : [])
+                    ...containterLogFiles
                 ]
             ).then(
                 () => log.info('upload successful'),
