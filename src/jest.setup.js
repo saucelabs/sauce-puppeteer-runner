@@ -1,11 +1,11 @@
 const puppeteer = require('puppeteer-core')
 const debug = require('debug')
 
-const { CHROME_DEFAULT_PATH } = require('./constants')
+const { CHROME_DEFAULT_PATH, JEST_TIMEOUT } = require('./constants')
 const { logHelper } = require('./utils')
 debug.log = logHelper
 
-jest.setTimeout(60000)
+jest.setTimeout(JEST_TIMEOUT)
 
 beforeAll(async () => {
     global.browser = await puppeteer.launch({
