@@ -57,13 +57,15 @@ module.exports = class TestrunnerReporter {
         await exec('stop-video')
 
         const logFilePath = path.join(process.cwd(), '/log.json')
+        const videoPath = '/home/seluser/videos/video.mp4'
+        const hasVideo = fs.existsSync(videoPath)
         await Promise.all([
             api.uploadJobAssets(
                 sessionId,
                 [
                     logFilePath,
-                    '/home/seluser/videos/video.mp4',
-                    '/home/seluser/docker.log'
+                    '/home/seluser/docker.log',
+                    ...(hasVideo ? [videoPath] : [])
                 ]
             ).then(
                 () => log.info('upload successful'),

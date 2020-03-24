@@ -9,7 +9,7 @@ jest.setTimeout(60000)
 
 beforeAll(async () => {
     global.browser = await puppeteer.launch({
-        headless: false,
+        headless: !Boolean(process.env.DISPLAY),
         args: ['--start-fullscreen'],
         executablePath: process.env.CHROME_BINARY_PATH || CHROME_DEFAULT_PATH
     }).catch((err) => {
