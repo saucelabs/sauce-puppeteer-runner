@@ -245,3 +245,6 @@ fi
 # - someUser's user-specific shell profile, if defined, is loaded.
 # - $HOME points to someUser's home directory, so there's no need for -H (though you may still specify it)
 # - the working directory for the impersonating shell is the someUser's home directory.
+
+# sleep some time to let supervisord start
+sleep 2
