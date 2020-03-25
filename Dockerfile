@@ -1,5 +1,4 @@
 FROM saucelabs/testrunner-image:latest
-USER root
 
 #================
 # Install Node.JS
