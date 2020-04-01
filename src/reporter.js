@@ -75,7 +75,8 @@ module.exports = class TestrunnerReporter {
             ),
             api.updateJob(process.env.SAUCE_USERNAME, sessionId, {
                 name: filename,
-                passed: hasPassed
+                passed: hasPassed,
+                build: process.env.SAUCE_BUILD_NUM
             })
         ])
 
