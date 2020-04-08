@@ -16,3 +16,18 @@ beforeAll(async () => {
         console.error(`Couldn't start Puppeteer: ${err.message}`)
     })
 })
+
+const monkeyPatchedTest = (origFn) => (testName, testFn) => {
+    function patchedFn (...args) {
+        global.logs.push({
+            status: 'info',
+            message: testName,
+            screenshot: null
+        })
+        return testFn.call(this, ...args)
+    }
+    return origFn(testName, patchedFn)
+}
+
+global.it = monkeyPatchedTest(global.it)
+global.test = monkeyPatchedTest(global.test)
