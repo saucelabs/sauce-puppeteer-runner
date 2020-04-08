@@ -2,4 +2,3 @@
 ./*.js
 ./*.json
 !package.json
-bin
