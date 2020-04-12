@@ -238,7 +238,7 @@ if [ "${DEBUG}" == "bash" ]; then
   cd /var/log/cont
   exec bash
 else
-  exec run-supervisord.sh &
+  exec run-supervisord.sh
 fi
 
 # Note: sudo -i creates a login shell for someUser, which implies the following:
