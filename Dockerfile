@@ -16,6 +16,14 @@ WORKDIR /home/testrunner
 COPY . .
 RUN sudo chown -R seluser /home/testrunner
 
+RUN curl -L -o saucectl_0.3.0_Linux_x86_64.tar.gz \
+  -H 'Authorization: token 3b7322d6d66db64750809c1e2a0162a0e8b124c0' \
+  -H "Accept: application/octet-stream" \
+  https://api.github.com/repos/saucelabs/saucectl/releases/assets/19820019 \
+  && tar -xvzf saucectl_0.3.0_Linux_x86_64.tar.gz \
+  && mkdir /home/testrunner/bin/ \
+  && mv ./saucectl /home/testrunner/bin/
+
 RUN npm install
 
 #==================
