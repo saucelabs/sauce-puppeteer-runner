@@ -12,6 +12,13 @@ ENV PATH="/home/testrunner/bin:/home/seluser/.nvm/versions/node/v12.16.2/bin:${P
     CHROME_BINARY_PATH="/usr/bin/google-chrome-stable" \
     WDIO_LOG_PATH="/home/seluser/docker.log"
 
+# Creating base directory for Xvfb
+RUN sudo mkdir -p /tmp/.X11-unix /tmp/.ICE-unix
+# Permissions related to the X system
+RUN sudo chmod 1777 /tmp/.X11-unix /tmp/.ICE-unix
+# Set owner to root
+RUN sudo chown -R root /tmp/.X11-unix /tmp/.ICE-unix
+
 WORKDIR /home/testrunner
 COPY . .
 RUN sudo chown -R seluser /home/testrunner
