@@ -80,5 +80,6 @@ module.exports = class TestrunnerReporter {
         ])
 
         log.info('Finished testrun!')
+        console.log(`\nOpen job details page: https://app.saucelabs.com/tests/${sessionId}\n`)
     }
 }
