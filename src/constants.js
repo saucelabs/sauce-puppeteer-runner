@@ -16,3 +16,9 @@ exports.LOG_FILES = [
     '/home/seluser/videos/video.mp4',
     '/home/seluser/docker.log'
 ]
+
+exports.CHROME_ARGS = [
+    '--start-fullscreen',
+    '--remote-debugging-port=9222',
+    '--remote-debugging-address=0.0.0.0'
+]
