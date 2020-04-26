@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
+const findProcess = require('find-process')
 const logger = require('@wdio/logger').default
 const SauceLabs = require('saucelabs').default
 const { remote } = require('webdriverio')
@@ -81,5 +82,14 @@ module.exports = class TestrunnerReporter {
 
         log.info('Finished testrun!')
         console.log(`\nOpen job details page: https://app.saucelabs.com/tests/${sessionId}\n`)
+
+        /**
+         * find socat process and kill it otherwise process can't shutdown
+         * as a socket is still listening to the CDP interface
+         */
+        const ps = await findProcess('name', 'socat')
+        if (ps.length) {
+            process.kill(ps[0].pid, 'SIGTERM')
+        }
     }
 }

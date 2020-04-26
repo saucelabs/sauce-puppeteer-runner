@@ -21,6 +21,7 @@
   "homepage": "https://github.com/christian-bromann/sauce-wdio-runner#readme",
   "dependencies": {
     "@wdio/logger": "^5.16.10",
+    "find-process": "^1.4.3",
     "jest": "^25.1.0",
     "puppeteer-core": "^2.1.0",
     "saucelabs": "orchestrator-experiment",
