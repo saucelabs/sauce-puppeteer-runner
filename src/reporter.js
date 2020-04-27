@@ -37,7 +37,7 @@ module.exports = class TestrunnerReporter {
                 }
             }).catch((err) => err)
 
-            const jobs = await api.listJobs(
+            const { jobs } = await api.listJobs(
                 process.env.SAUCE_USERNAME,
                 { limit: 1, full: true, name: jobName }
             )
