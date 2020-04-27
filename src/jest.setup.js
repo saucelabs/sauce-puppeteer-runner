@@ -1,3 +1,4 @@
+const got = require('got')
 const puppeteer = require('puppeteer-core')
 const debug = require('debug')
 
@@ -15,6 +16,10 @@ beforeAll(async () => {
     }).catch((err) => {
         console.error(`Couldn't start Puppeteer: ${err.message}`)
     })
+
+    const req = got('http://localhost:9223/json')
+    const pages = await req.json()
+    console.log(`Watch test: https://chrome-devtools-frontend.appspot.com/serve_file/@44f4233f08910d83b146130c1938256a2e05b136/inspector.html?ws=localhost:9222/devtools/page/${pages[0].id}&remoteFrontend=true`);
 })
 
 const monkeyPatchedTest = (origFn) => (testName, testFn) => {
