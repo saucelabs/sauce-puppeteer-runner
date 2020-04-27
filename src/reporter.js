@@ -21,22 +21,27 @@ module.exports = class TestrunnerReporter {
     constructor () {
         log.info('Create job shell')
         this.sessionId = (async () => {
-            const session = await remote({
+            const jobName = `DevX ${Math.random()}`
+            await remote({
                 user: process.env.SAUCE_USERNAME,
                 key: process.env.SAUCE_ACCESS_KEY,
-                logLevel: 'error',
+                logLevel: 'silent',
                 capabilities: {
                     browserName: 'Chrome',
-                    platformName: 'MacOS 10.15',
-                    browserVersion: '77',
+                    platformName: '*',
+                    browserVersion: '*',
                     'sauce:options': {
-                        name: 'Puppeteer Test...'
+                        devX: true,
+                        name: jobName
                     }
                 }
-            })
-            log.info(`Created job shell with session id ${session.sessionId}`)
-            await session.deleteSession()
-            return session.sessionId
+            }).catch((err) => err)
+
+            const jobs = await api.listJobs(
+                process.env.SAUCE_USERNAME,
+                { limit: 1, full: true, name: jobName }
+            )
+            return jobs[0].id
         })()
     }
 
