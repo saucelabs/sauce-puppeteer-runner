@@ -1,12 +1,20 @@
+const path = require('path')
+
 const got = require('got')
 const puppeteer = require('puppeteer-core')
-const debug = require('debug')
+const debug = require(
+    path.join(
+        path.dirname(require.resolve('puppeteer-core')),
+        'node_modules',
+        'debug'
+    )
+)
 
 const { CHROME_DEFAULT_PATH, JEST_TIMEOUT, CHROME_ARGS } = require('./constants')
 const { logHelper } = require('./utils')
 debug.log = logHelper
 
-jest.setTimeout(JEST_TIMEOUT)
+jest.setTimeout(process.env.JEST_TIMEOUT || JEST_TIMEOUT)
 
 beforeAll(async () => {
     global.browser = await puppeteer.launch({
@@ -19,7 +27,7 @@ beforeAll(async () => {
 
     const req = got('http://localhost:9223/json')
     const pages = await req.json()
-    console.log(`Watch test: https://chrome-devtools-frontend.appspot.com/serve_file/@44f4233f08910d83b146130c1938256a2e05b136/inspector.html?ws=localhost:9222/devtools/page/${pages[0].id}&remoteFrontend=true`);
+    console.log(`Watch test: https://chrome-devtools-frontend.appspot.com/serve_file/@ec99b9f060de3f065f466ccd2b2bfbf17376b61e/devtools_app.html?ws=localhost:9222/devtools/page/${pages[0].id}&remoteFrontend=true`);
 })
 
 const monkeyPatchedTest = (origFn) => (testName, testFn) => {
