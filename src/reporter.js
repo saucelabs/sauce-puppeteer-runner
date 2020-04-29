@@ -43,6 +43,7 @@ module.exports = class TestrunnerReporter {
             //     process.env.SAUCE_USERNAME,
             //     { limit: 1, full: true, name: jobName }
             // )
+            await session.deleteSession()
             return session.sessionId // jobs[0].id
         })()
     }
