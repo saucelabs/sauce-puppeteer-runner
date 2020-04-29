@@ -22,14 +22,16 @@ module.exports = class TestrunnerReporter {
         log.info('Create job shell')
         this.sessionId = (async () => {
             const jobName = `DevX ${Math.random()}`
-            await remote({
+            const session = await remote({
                 user: process.env.SAUCE_USERNAME,
                 key: process.env.SAUCE_ACCESS_KEY,
                 logLevel: 'silent',
                 capabilities: {
                     browserName: 'Chrome',
-                    platformName: '*',
-                    browserVersion: '*',
+                    // platformName: '*',
+                    // browserVersion: '*',
+                    platformName: 'MacOS 10.15',
+                    browserVersion: '81',
                     'sauce:options': {
                         devX: true,
                         name: jobName
@@ -37,11 +39,11 @@ module.exports = class TestrunnerReporter {
                 }
             }).catch((err) => err)
 
-            const { jobs } = await api.listJobs(
-                process.env.SAUCE_USERNAME,
-                { limit: 1, full: true, name: jobName }
-            )
-            return jobs[0].id
+            // const { jobs } = await api.listJobs(
+            //     process.env.SAUCE_USERNAME,
+            //     { limit: 1, full: true, name: jobName }
+            // )
+            return session.sessionId // jobs[0].id
         })()
     }
 
