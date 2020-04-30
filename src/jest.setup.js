@@ -26,7 +26,7 @@ beforeAll(async () => {
     })
 
     const req = got('http://localhost:9223/json')
-    const pages = await req.json()
+    const pages = await req.json().catch((err) => err)
     if (pages && pages.length) {
         console.log(`Watch test: https://chrome-devtools-frontend.appspot.com/serve_file/@ec99b9f060de3f065f466ccd2b2bfbf17376b61e/devtools_app.html?ws=localhost:9222/devtools/page/${pages[0].id}&remoteFrontend=true`);
     }
