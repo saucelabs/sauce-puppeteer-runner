@@ -75,6 +75,8 @@ module.exports = class TestrunnerReporter {
     }
 
     async onRunComplete (test, { testResults, numFailedTests }) {
+        log.info('Finished testrun!')
+
         const filename = path.basename(testResults[0].testFilePath)
         const hasPassed = numFailedTests === 0
         const sessionId = await this.sessionId
@@ -83,7 +85,7 @@ module.exports = class TestrunnerReporter {
          * only upload assets if a session was initiated before
          */
         if (!sessionId) {
-            return log.info('Finished testrun!')
+            return
         }
 
         await exec('stop-video')
@@ -110,6 +112,5 @@ module.exports = class TestrunnerReporter {
         ])
 
         console.log(`\nOpen job details page: https://app.saucelabs.com/tests/${sessionId}\n`)
-        log.info('Finished testrun!')
     }
 }
