@@ -23,7 +23,8 @@ let build = process.env.SAUCE_BUILD_NAME
 /**
  * replace placeholders (e.g. $BUILD_ID) with environment values
  */
-for (const match of (build || '').match(/\$[a-zA-Z0-9_-]+/g)) {
+const buildMatches = (build || '').match(/\$[a-zA-Z0-9_-]+/g) || []
+for (const match of buildMatches) {
     const replacement = process.env[match.slice(1)]
     build = build.replace(match, replacement || '')
 }
