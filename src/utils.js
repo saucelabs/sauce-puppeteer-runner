@@ -1,6 +1,8 @@
 const shell = require('shelljs')
 const logger = require('@wdio/logger').default
 
+const { COMMAND_TIMEOUT } = require('./constants')
+
 const log = logger('utils')
 
 let lastCommand = Date.now()
@@ -60,15 +62,14 @@ exports.logHelper = (...args) => {
     lastCommand = Date.now()
 }
 
-const COMMAND_TIMEOUT = 5000
-exports.exec = async (expression) => {
+exports.exec = async (expression, timeout = COMMAND_TIMEOUT) => {
     const cp = shell.exec(expression, { async: true, silent: true })
     cp.stdout.on('data', (data) => log.info(`${data}`))
     cp.stderr.on('data', (data) => log.info(`${data}`))
 
     return new Promise((resolve) => {
         const timeout = setTimeout(resolve, COMMAND_TIMEOUT)
-        cp.on('close', () => {
+        cp.on('exit', () => {
             clearTimeout(timeout)
             resolve()
         })
