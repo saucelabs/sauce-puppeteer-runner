@@ -32,7 +32,19 @@ module.exports = class TestrunnerReporter {
     constructor () {
         log.info('Create job shell')
         this.sessionId = (async () => {
-            const session = await remote({
+            /**
+             * don't try to create a job if no credentials are set
+             */
+            if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
+                return
+            }
+
+            /**
+             * create a job shell by trying to initialise a session with
+             * invalid capabilities
+             * ToDo(Christian): remove once own testrunner job API is available
+             */
+            await remote({
                 user: process.env.SAUCE_USERNAME,
                 key: process.env.SAUCE_ACCESS_KEY,
                 connectionRetryCount: 0,
