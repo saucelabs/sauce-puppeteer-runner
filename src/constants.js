@@ -1,6 +1,7 @@
 exports.HOME_DIR = '/home/seluser'
 exports.CHROME_DEFAULT_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 exports.JEST_TIMEOUT = 60 * 1000 // 1min
+exports.COMMAND_TIMEOUT = 10 * 1000 // 10s
 
 const LOG_DIR = '/var/log/cont'
 exports.LOG_FILES = [
