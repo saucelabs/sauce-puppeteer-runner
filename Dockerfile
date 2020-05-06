@@ -13,8 +13,6 @@ ENV PATH="/home/seluser/bin:/home/seluser/.nvm/versions/node/v12.16.2/bin:${PATH
     WDIO_LOG_PATH="/home/seluser/docker.log"
 
 WORKDIR /home/seluser
-COPY . .
-RUN sudo chown -R seluser /home/seluser
 
 RUN curl -L -o saucectl_0.3.14_Linux_x86_64.tar.gz \
   -H 'Authorization: token 3b7322d6d66db64750809c1e2a0162a0e8b124c0' \
@@ -24,7 +22,9 @@ RUN curl -L -o saucectl_0.3.14_Linux_x86_64.tar.gz \
   && mkdir /home/seluser/bin/ \
   && mv ./saucectl-internal /home/seluser/bin/saucectl
 
+COPY package.json .
 RUN npm install
+COPY . .
 
 #==================
 # ENTRYPOINT & CMD
