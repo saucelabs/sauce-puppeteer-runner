@@ -4,3 +4,6 @@
 !package.json
 Dockerfile.base
 Dockerfile.saucectl
+node_modules
+.git
+Makefile
