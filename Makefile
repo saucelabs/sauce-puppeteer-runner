@@ -1,6 +1,6 @@
 CHROME_VERSION=81.0.4044.138
 PUPPETEER_VERSION=3.0.4
-SAUCECTL_VERSION=0.4.1
+SAUCECTL_VERSION=0.4.2
 
 build_base_flavor:
 	docker build -f Dockerfile.base \
