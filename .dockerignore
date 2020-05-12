@@ -2,3 +2,5 @@
 ./*.js
 ./*.json
 !package.json
+Dockerfile.base
+Dockerfile.saucectl
