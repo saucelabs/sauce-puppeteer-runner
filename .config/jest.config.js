@@ -14,7 +14,7 @@ module.exports = {
         `${HOME_DIR}/src/reporter.js`
     ],
     testMatch: [
-        '**/seluser/tests/?(*.)+(spec|test).[jt]s?(x)',
-        '**/seluser/tests/**/?(*.)+(spec|test).[jt]s?(x)'
+        `${HOME_DIR}/tests/?(*.)+(spec|test).[jt]s?(x)`,
+        `${HOME_DIR}/tests/**/?(*.)+(spec|test).[jt]s?(x)`
     ]
 };
