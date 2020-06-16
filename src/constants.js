@@ -1,7 +1,7 @@
 const path = require('path');
 exports.HOME_DIR = path.join(__dirname, '..');
 exports.CHROME_DEFAULT_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-exports.JEST_TIMEOUT = 60 // 1min
+exports.DEFAULT_JEST_TIMEOUT = 60 // 1min
 exports.COMMAND_TIMEOUT = 10 * 1000 // 10s
 
 const LOG_DIR = '/var/log/cont'
