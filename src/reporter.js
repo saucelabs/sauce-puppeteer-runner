@@ -120,11 +120,11 @@ module.exports = class TestrunnerReporter {
         let domain
 
         switch (region) {
-            case "eu-central-1":
-                domain = "eu-central-1.saucelabs.com"
+            case "us-west-1":
+                domain = "saucelabs.com"
                 break
             default:
-                domain = "saucelabs.com"
+                domain = `${region}.saucelabs.com`
         }
 
         console.log(`\nOpen job details page: https://app.${domain}/tests/${sessionId}\n`)
