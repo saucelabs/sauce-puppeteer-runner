@@ -6,15 +6,16 @@ module.exports = {
     rootDir: HOME_DIR,
     testEnvironment: 'node',
     setupFilesAfterEnv: [
-        `${HOME_DIR}/src/jest.setup.js`,
-        `${HOME_DIR}/src/jest.teardown.js`
+        path.join(HOME_DIR, 'src', 'jest.setup.js'),
+        path.join(HOME_DIR, 'src', 'jest.teardown.js'),
     ],
     reporters: [
         `default`,
-        `${HOME_DIR}/src/reporter.js`
+        path.join(HOME_DIR, 'src', 'reporter.js'),
     ],
     testMatch: [
-        `${HOME_DIR}/tests/?(*.)+(spec|test).[jt]s?(x)`,
-        `${HOME_DIR}/tests/**/?(*.)+(spec|test).[jt]s?(x)`
+        path.join(HOME_DIR, 'tests', '?(*.)+(spec|test).js?(x)'),
+        path.join(HOME_DIR, 'tests', '**', '?(*.)+(spec|test).js?(x)'),
+
     ]
 };
