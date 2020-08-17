@@ -16,8 +16,9 @@ ENV PATH="/home/seluser/bin:/home/seluser/.nvm/versions/node/v${NODE_VERSION}/bi
 
 WORKDIR /home/seluser
 
-COPY package.json .
-RUN npm install
+COPY --chown=seluser:seluser package.json .
+
+RUN npm install --production
 
 #==================
 # Install saucectl

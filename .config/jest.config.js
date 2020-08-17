@@ -2,7 +2,8 @@ const path = require('path')
 const fs = require('fs');
 const yaml = require('js-yaml');
 const {promisify} = require('util');
-const {HOME_DIR} = require('../src/constants')
+const {HOME_DIR} = require('../src/constants');
+const { exec } = require('child_process');
 
 // Promisify callback functions
 const fileExists = promisify(fs.exists)
@@ -12,8 +13,8 @@ const readFile = promisify(fs.readFile)
 const DefaultRunCfg = {
     projectPath: `${HOME_DIR}`,
     match: [
-        `${HOME_DIR}/tests/?(*.)+(spec|test).[jt]s?(x)`,
-        `${HOME_DIR}/tests/**/?(*.)+(spec|test).[jt]s?(x)`
+        `${HOME_DIR}/tests/?(*.)+(spec|test).js?(x)`,
+        `${HOME_DIR}/tests/**/?(*.)+(spec|test).js?(x)`
     ]
 }
 
@@ -26,13 +27,13 @@ async function loadRunConfig(cfgPath) {
     return DefaultRunCfg
 }
 
-function resolveTestMatches(runCfg) {
+function resolveTestMatches(HOME_DIR, runCfg) {
     return runCfg.match.map(
         p => {
             if (path.isAbsolute(p)) {
                 return p
             }
-            return path.join(runCfg.projectPath, p)
+            return path.join(HOME_DIR, runCfg.projectPath, p)
         }
     );
 }
@@ -40,7 +41,21 @@ function resolveTestMatches(runCfg) {
 module.exports = async () => {
     const runCfgPath = path.join(HOME_DIR, 'run.yaml')
     const runCfg = await loadRunConfig(runCfgPath)
-    const testMatch = resolveTestMatches(runCfg)
+    const testMatch = resolveTestMatches(HOME_DIR, runCfg)
+
+    async function transpileTypescript () {
+        const tsconfigPath = path.join(HOME_DIR, runCfg.projectPath, 'tsconfig.json')
+        if (promisify(fs.exists)(tsconfigPath)) {
+            console.log(`Transpiling typescript config found at '${tsconfigPath}'`);
+            try {
+                const tscPath = path.join('/home', 'seluser', 'node_modules', 'typescript', 'bin', 'tsc');
+                await promisify(exec)(`${tscPath} -p ${tsconfigPath}`);
+            } catch (e) {
+                console.error(`Could not transpile Typescript. ${e}.`);
+            }
+        }
+    };
+    await transpileTypescript();
 
     return {
         rootDir: HOME_DIR,
@@ -53,6 +68,6 @@ module.exports = async () => {
             `default`,
             `${HOME_DIR}/src/reporter.js`
         ],
-        testMatch: testMatch,
+        testMatch,
     };
 };
