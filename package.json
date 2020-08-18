@@ -7,7 +7,8 @@
     "build": "docker build -t saucelabs/${npm_package_name}:latest --cache-from saucelabs/${npm_package_name}:latest .",
     "docker:push": "docker push saucelabs/${npm_package_name}:latest",
     "start": "docker run --env SAUCE_USERNAME --env SAUCE_ACCESS_KEY -d saucelabs/${npm_package_name}:latest",
-    "test": "DISPLAY=\"$(cat DISPLAY)\" DEBUG=\"puppeteer:*\" jest --config=./.config/jest.config.js --runInBand"
+    "transpile": "node ./transpile-typescript",
+    "test": "npm run transpile && DISPLAY=\"$(cat DISPLAY)\" DEBUG=\"puppeteer:*\" jest --config=./.config/jest.config.js --runInBand"
   },
   "repository": {
     "type": "git",
@@ -21,11 +22,13 @@
   "dependencies": {
     "@wdio/logger": "5.16.10",
     "find-process": "1.4.3",
+    "glob": "^7.1.6",
     "got": "11.0.2",
     "jest": "25.1.0",
     "puppeteer-core": "3.0.4",
     "saucelabs": "4.4.0",
     "shelljs": "0.8.3",
+    "typescript": "^3.9.7",
     "webdriverio": "5.21.0"
   }
 }
