@@ -1,5 +1,5 @@
-rootDir: /home/seluser/
-targetDir: /home/seluser/tests
+rootDir: /Users/danielgraham/sauce-puppeteer-runner/
+targetDir: /Users/danielgraham/sauce-puppeteer-runner/tests
 execCommand:
   - npm
   - test
