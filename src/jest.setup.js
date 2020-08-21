@@ -23,8 +23,6 @@ beforeAll(async () => {
         headless: !Boolean(process.env.DISPLAY),
         args: CHROME_ARGS,
         executablePath: process.env.CHROME_BINARY_PATH || CHROME_DEFAULT_PATH
-    }).catch((err) => {
-        console.error(`Couldn't start Puppeteer: ${err.message}`)
     })
 
     /**
