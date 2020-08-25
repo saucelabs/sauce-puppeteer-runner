@@ -1,7 +1,5 @@
 FROM saucelabs/testrunner-image:v0.1.0
 
-USER root
-
 #================
 # Install Node.JS
 #================
@@ -35,6 +33,9 @@ RUN curl -L -o ${SAUCECTL_BINARY} \
   && rm ${SAUCECTL_BINARY}
 
 COPY --chown=seluser:seluser . .
+
+# Workaround for permissions in CI if run with a different user
+RUN chmod 777 -R /home/seluser/
 
 #==================
 # ENTRYPOINT & CMD
