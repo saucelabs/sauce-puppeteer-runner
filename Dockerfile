@@ -22,7 +22,7 @@ RUN npm install
 #==================
 # Install saucectl
 #==================
-ARG SAUCECTL_VERSION=0.7.0
+ARG SAUCECTL_VERSION=0.11.1
 ENV SAUCECTL_BINARY=saucectl_${SAUCECTL_VERSION}_linux_64-bit.tar.gz
 RUN curl -L -o ${SAUCECTL_BINARY} \
   -H "Accept: application/octet-stream" \
@@ -35,7 +35,7 @@ RUN curl -L -o ${SAUCECTL_BINARY} \
 COPY --chown=seluser:seluser . .
 
 # Workaround for permissions in CI if run with a different user
-RUN chmod 777 -R /home/seluser/
+#RUN chmod 777 -R /home/seluser/
 
 #==================
 # ENTRYPOINT & CMD
