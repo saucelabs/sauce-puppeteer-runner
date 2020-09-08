@@ -5,7 +5,7 @@ const {HOME_DIR} = require('../src/constants')
 
 // the default test matching behavior for versions <= v0.1.4
 const DefaultRunCfg = {
-    projectPath: "${HOME_DIR}",
+    projectPath: `${HOME_DIR}`,
     match: [
         `${HOME_DIR}/tests/?(*.)+(spec|test).[jt]s?(x)`,
         `${HOME_DIR}/tests/**/?(*.)+(spec|test).[jt]s?(x)`
