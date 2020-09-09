@@ -20,6 +20,7 @@ function loadRunConfig(cfgPath) {
     if (fs.existsSync(cfgPath)) {
         return yaml.safeLoad(fs.readFileSync(cfgPath, 'utf8'));
     }
+    console.log(`Run config (${cfgPath}) unavailable. Loading defaults.`)
 
     return DefaultRunCfg
 }
