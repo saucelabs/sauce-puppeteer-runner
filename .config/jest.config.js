@@ -13,8 +13,8 @@ const DefaultRunCfg = {
 }
 
 const runCfgPath = path.join(HOME_DIR, 'run.yaml')
-runCfg = loadRunConfig(runCfgPath)
-testMatch = resolveTestMatches(runCfg)
+const runCfg = loadRunConfig(runCfgPath)
+const testMatch = resolveTestMatches(runCfg)
 
 function loadRunConfig(cfgPath) {
     if (fs.existsSync(cfgPath)) {
