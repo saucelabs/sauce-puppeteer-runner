@@ -1,7 +1,12 @@
 const path = require('path')
 const fs = require('fs');
 const yaml = require('js-yaml');
+const {promisify} = require('util');
 const {HOME_DIR} = require('../src/constants')
+
+// Promisify callback functions
+const fileExists = promisify(fs.exists)
+const readFile = promisify(fs.readFile)
 
 // the default test matching behavior for versions <= v0.1.4
 const DefaultRunCfg = {
@@ -12,13 +17,9 @@ const DefaultRunCfg = {
     ]
 }
 
-const runCfgPath = path.join(HOME_DIR, 'run.yaml')
-const runCfg = loadRunConfig(runCfgPath)
-const testMatch = resolveTestMatches(runCfg)
-
-function loadRunConfig(cfgPath) {
-    if (fs.existsSync(cfgPath)) {
-        return yaml.safeLoad(fs.readFileSync(cfgPath, 'utf8'));
+async function loadRunConfig(cfgPath) {
+    if (await fileExists(cfgPath)) {
+        return yaml.safeLoad(await readFile(cfgPath, 'utf8'));
     }
     console.log(`Run config (${cfgPath}) unavailable. Loading defaults.`)
 
@@ -36,17 +37,22 @@ function resolveTestMatches(runCfg) {
     );
 }
 
+module.exports = async () => {
+    const runCfgPath = path.join(HOME_DIR, 'run.yaml')
+    const runCfg = await loadRunConfig(runCfgPath)
+    const testMatch = resolveTestMatches(runCfg)
 
-module.exports = {
-    rootDir: HOME_DIR,
-    testEnvironment: 'node',
-    setupFilesAfterEnv: [
-        `${HOME_DIR}/src/jest.setup.js`,
-        `${HOME_DIR}/src/jest.teardown.js`
-    ],
-    reporters: [
-        `default`,
-        `${HOME_DIR}/src/reporter.js`
-    ],
-    testMatch: testMatch,
+    return {
+        rootDir: HOME_DIR,
+        testEnvironment: 'node',
+        setupFilesAfterEnv: [
+            `${HOME_DIR}/src/jest.setup.js`,
+            `${HOME_DIR}/src/jest.teardown.js`
+        ],
+        reporters: [
+            `default`,
+            `${HOME_DIR}/src/reporter.js`
+        ],
+        testMatch: testMatch,
+    };
 };
