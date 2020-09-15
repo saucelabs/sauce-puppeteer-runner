@@ -44,15 +44,20 @@ module.exports = async () => {
     const testMatch = resolveTestMatches(HOME_DIR, runCfg)
 
     async function transpileTypescript () {
-        const tsconfigPath = path.join(HOME_DIR, runCfg.projectPath, 'tsconfig.json')
-        if (promisify(fs.exists)(tsconfigPath)) {
+        const tsconfigPath = path.join(HOME_DIR, runCfg.projectPath, 'tsconfig.json');
+        console.log(`Looking if tsconfig present at '${tsconfigPath}'`);
+        if (fs.existsSync(tsconfigPath)) {
             console.log(`Transpiling typescript config found at '${tsconfigPath}'`);
             try {
-                const tscPath = path.join('/home', 'seluser', 'node_modules', 'typescript', 'bin', 'tsc');
+                const tscPath = path.join(HOME_DIR, 'node_modules', 'typescript', 'bin', 'tsc');
                 await promisify(exec)(`${tscPath} -p ${tsconfigPath}`);
             } catch (e) {
+                console.error(e.stdout);
+                console.error(e.stderr);
                 console.error(`Could not transpile Typescript. ${e}.`);
             }
+        } else {
+            console.log('No tsconfig.json found. Not transpiling any typescript');
         }
     };
     await transpileTypescript();

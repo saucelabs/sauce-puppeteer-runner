@@ -18,7 +18,7 @@ WORKDIR /home/seluser
 
 COPY --chown=seluser:seluser package.json .
 
-RUN npm install --production
+RUN npm ci --production
 
 #==================
 # Install saucectl
@@ -34,6 +34,7 @@ RUN curl -L -o ${SAUCECTL_BINARY} \
   && rm ${SAUCECTL_BINARY}
 
 COPY --chown=seluser:seluser . .
+RUN mkdir tests/
 
 # Workaround for permissions in CI if run with a different user
 RUN chmod 777 -R /home/seluser/
