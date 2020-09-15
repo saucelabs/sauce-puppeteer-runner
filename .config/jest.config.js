@@ -3,11 +3,12 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const {promisify} = require('util');
 const {HOME_DIR} = require('../src/constants');
-const { exec } = require('child_process');
+let { exec } = require('child_process');
 
 // Promisify callback functions
 const fileExists = promisify(fs.exists)
 const readFile = promisify(fs.readFile)
+exec = promisify(exec);
 
 // the default test matching behavior for versions <= v0.1.4
 const DefaultRunCfg = {
@@ -27,13 +28,13 @@ async function loadRunConfig(cfgPath) {
     return DefaultRunCfg
 }
 
-function resolveTestMatches(HOME_DIR, runCfg) {
+function resolveTestMatches(runCfg) {
     return runCfg.match.map(
         p => {
             if (path.isAbsolute(p)) {
                 return p
             }
-            return path.join(HOME_DIR, runCfg.projectPath, p)
+            return path.join(runCfg.projectPath, p)
         }
     );
 }
@@ -41,20 +42,25 @@ function resolveTestMatches(HOME_DIR, runCfg) {
 module.exports = async () => {
     const runCfgPath = path.join(HOME_DIR, 'run.yaml')
     const runCfg = await loadRunConfig(runCfgPath)
-    const testMatch = resolveTestMatches(HOME_DIR, runCfg)
+    if (!path.isAbsolute(runCfg.projectPath)) {
+        runCfg.projectPath = path.join(HOME_DIR, runCfg.projectPath);
+    }
+
+    const testMatch = resolveTestMatches(runCfg);
 
     async function transpileTypescript () {
-        const tsconfigPath = path.join(HOME_DIR, runCfg.projectPath, 'tsconfig.json');
+        const tsconfigPath = path.join(runCfg.projectPath, 'tsconfig.json');
         console.log(`Looking if tsconfig present at '${tsconfigPath}'`);
-        if (fs.existsSync(tsconfigPath)) {
+        if (await fileExists(tsconfigPath)) {
             console.log(`Transpiling typescript config found at '${tsconfigPath}'`);
             try {
                 const tscPath = path.join(HOME_DIR, 'node_modules', 'typescript', 'bin', 'tsc');
-                await promisify(exec)(`${tscPath} -p ${tsconfigPath}`);
+                await exec(`${tscPath} -p ${tsconfigPath}`);
             } catch (e) {
                 console.error(e.stdout);
                 console.error(e.stderr);
                 console.error(`Could not transpile Typescript. ${e}.`);
+                throw e;
             }
         } else {
             console.log('No tsconfig.json found. Not transpiling any typescript');
