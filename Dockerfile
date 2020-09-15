@@ -16,8 +16,8 @@ ENV PATH="/home/seluser/bin:/home/seluser/.nvm/versions/node/v${NODE_VERSION}/bi
 
 WORKDIR /home/seluser
 
-COPY --chown=seluser:seluser package.json .
-COPY --chown=seluser:seluser package-lock.json .
+COPY package.json .
+COPY package-lock.json .
 
 RUN npm ci --production
 

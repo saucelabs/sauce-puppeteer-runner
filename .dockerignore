@@ -2,6 +2,7 @@
 ./*.js
 ./*.json
 !package.json
+!package-lock.json
 Dockerfile.base
 Dockerfile.saucectl
 node_modules
