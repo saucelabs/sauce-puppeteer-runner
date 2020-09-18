@@ -34,7 +34,6 @@ function resolveTestMatches(runCfg) {
             if (path.isAbsolute(p)) {
                 return p
             }
-            console.log('*****', p);
             return path.join(runCfg.projectPath, p)
         }
     );
