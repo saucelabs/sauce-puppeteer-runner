@@ -34,6 +34,7 @@ function resolveTestMatches(runCfg) {
             if (path.isAbsolute(p)) {
                 return p
             }
+            console.log('*****', p);
             return path.join(runCfg.projectPath, p)
         }
     );
@@ -42,31 +43,8 @@ function resolveTestMatches(runCfg) {
 module.exports = async () => {
     const runCfgPath = path.join(HOME_DIR, 'run.yaml')
     const runCfg = await loadRunConfig(runCfgPath)
-    if (!path.isAbsolute(runCfg.projectPath)) {
-        runCfg.projectPath = path.join(HOME_DIR, runCfg.projectPath);
-    }
 
     const testMatch = resolveTestMatches(runCfg);
-
-    async function transpileTypescript () {
-        const tsconfigPath = path.join(runCfg.projectPath, 'tsconfig.json');
-        console.log(`Looking if tsconfig present at '${tsconfigPath}'`);
-        if (await fileExists(tsconfigPath)) {
-            console.log(`Transpiling typescript config found at '${tsconfigPath}'`);
-            try {
-                const tscPath = path.join(HOME_DIR, 'node_modules', 'typescript', 'bin', 'tsc');
-                await exec(`${tscPath} -p ${tsconfigPath}`);
-            } catch (e) {
-                console.error(e.stdout);
-                console.error(e.stderr);
-                console.error(`Could not transpile Typescript. ${e}.`);
-                throw e;
-            }
-        } else {
-            console.log('No tsconfig.json found. Not transpiling any typescript');
-        }
-    };
-    await transpileTypescript();
 
     return {
         rootDir: HOME_DIR,
