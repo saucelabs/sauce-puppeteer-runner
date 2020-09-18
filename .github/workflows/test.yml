@@ -27,13 +27,13 @@ jobs:
         with:
           repository: saucelabs/saucectl
           path: saucectl
-        env:
-          SKIP_CI: true
 
-      # Build saucectl and run some tests
-      - run: |
-          pushd saucectl && make build && popd
-          bash ./tests/e2e/run.sh
+      # Build saucectl
+      - run: pushd saucectl && make build && popd
+        name: Build Saucectl and run E2E tests
+
+      # Run e2e tests
+      - run: bash ./tests/e2e/run.sh
         env:
           SKIP_CI: true
           SAUCE_CTL_BINARY: ./saucectl/saucectl
