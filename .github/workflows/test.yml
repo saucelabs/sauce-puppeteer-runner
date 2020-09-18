@@ -21,13 +21,16 @@ jobs:
           tag_with_ref: true
           cache_froms: saucelabs/stt-puppeteer-jest-node:latest
           push: false
+      
+      # Checkout the latest saucectl
       - uses: actions/checkout@v2
         with:
           repository: saucelabs/saucectl
           path: saucectl
-          ref: dpgraham-windows-macos-ci-exception # TODO: Remove this once branch is committed
         env:
           SKIP_CI: true
+
+      # Build saucectl and run some tests
       - run: |
           pushd saucectl && make build && popd
           bash ./tests/e2e/run.sh
