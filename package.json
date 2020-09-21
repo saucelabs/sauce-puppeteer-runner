@@ -22,12 +22,21 @@
   "dependencies": {
     "@wdio/logger": "5.16.10",
     "find-process": "1.4.3",
+    "glob": "^7.1.6",
     "got": "11.0.2",
     "jest": "26.4.2",
+    "js-yaml": "3.14.0",
     "puppeteer-core": "3.0.4",
     "saucelabs": "4.4.0",
     "shelljs": "0.8.3",
-    "webdriverio": "5.21.0",
-    "js-yaml": "3.14.0"
+    "webdriverio": "5.21.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.13",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^14.10.1",
+    "@types/puppeteer": "^3.0.2",
+    "@types/puppeteer-core": "^2.0.0",
+    "typescript": "^3.9.7"
   }
 }

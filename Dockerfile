@@ -17,7 +17,9 @@ ENV PATH="/home/seluser/bin:/home/seluser/.nvm/versions/node/v${NODE_VERSION}/bi
 WORKDIR /home/seluser
 
 COPY package.json .
-RUN npm install
+COPY package-lock.json .
+
+RUN npm ci --production
 
 #==================
 # Install saucectl
@@ -33,6 +35,7 @@ RUN curl -L -o ${SAUCECTL_BINARY} \
   && rm ${SAUCECTL_BINARY}
 
 COPY --chown=seluser:seluser . .
+RUN mkdir tests/
 
 # Workaround for permissions in CI if run with a different user
 RUN chmod 777 -R /home/seluser/
