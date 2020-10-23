@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+const child_process = require('child_process');
+const { createWriteStream } = require('fs');
+
+(async () => {
+    const logFile = createWriteStream('./puppeteer.log', { encoding: 'utf-8', flags: 'w+' });
+    const child = child_process.spawn('jest', process.argv.slice(2));
+    child.stdout.on('data', (data) => {
+        process.stdout.write(data);
+        logFile.write(data);
+    });
+    child.on('exit', () => {
+        logFile.close();
+        process.exit();
+    });    
+})();
