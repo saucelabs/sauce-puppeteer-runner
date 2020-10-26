@@ -3,9 +3,6 @@ exports.CHROME_DEFAULT_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Go
 exports.DEFAULT_JEST_TIMEOUT = 60 // 1min
 exports.COMMAND_TIMEOUT = 10 * 1000 // 10s
 
-exports.PUPPETEER_SCRIPT = exports.HOME_DIR + '/puppeteer.typescript'
-exports.PUPPETEER_LOG = exports.HOME_DIR + '/console.log'
-
 const LOG_DIR = '/var/log/cont'
 exports.LOG_FILES = [
     LOG_DIR + '/chrome_browser.log',
@@ -20,7 +17,7 @@ exports.LOG_FILES = [
     LOG_DIR + '/xvfb-tryouts-stdout.log',
     exports.HOME_DIR + '/videos/video.mp4',
     exports.HOME_DIR + '/docker.log',
-    exports.PUPPETEER_LOG,
+    exports.HOME_DIR + '/puppeteer.log',
 ]
 
 exports.CHROME_ARGS = [

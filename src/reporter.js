@@ -7,7 +7,7 @@ const SauceLabs = require('saucelabs').default
 const { remote } = require('webdriverio')
 
 const { exec } = require('./utils')
-const { PUPPETEER_SCRIPT, PUPPETEER_LOG, LOG_FILES, HOME_DIR } = require('./constants')
+const { LOG_FILES, HOME_DIR } = require('./constants')
 
 const log = logger('reporter')
 
@@ -100,8 +100,6 @@ module.exports = class TestrunnerReporter {
 
         await exec('stop-video')
 
-        // Process script output
-        await exec(`< ${PUPPETEER_SCRIPT} perl -pe 's/\\e([^\\[\\]]|\\[.*?[a-zA-Z]|\\].*?\\a)//g' | col -b > ${PUPPETEER_LOG}`)
         const logFilePath = path.join(HOME_DIR, 'log.json')
         const containterLogFiles = LOG_FILES.filter(
             (path) => fs.existsSync(path))
