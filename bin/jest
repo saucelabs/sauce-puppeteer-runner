@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-const { jestRecoder } = require('../src/jest-recorder');
+const { jestRecorder } = require('../src/jest-recorder');
 
-(async () => jestRecoder())();
+(async () => jestRecorder())();
