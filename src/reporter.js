@@ -114,8 +114,14 @@ module.exports = class TestrunnerReporter {
                     ]
                 }
             ).then(
-                () => log.info('upload successful'),
-                (e) => log.error('upload failed:', e.stack)
+              (resp) => {
+                if (resp.errors) {
+                  for (let err of resp.errors) {
+                    console.error(err);
+                  }
+                }
+              },
+              (e) => log.error('upload failed:', e.stack)
             ),
             api.updateJob(process.env.SAUCE_USERNAME, sessionId, {
                 name: filename,
