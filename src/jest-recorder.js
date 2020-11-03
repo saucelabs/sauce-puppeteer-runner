@@ -17,10 +17,10 @@ const jestRecorder = () => {
     child.stdout.pipe(ws);
     child.stderr.pipe(ws);
 
-    child.on('exit', (exitCode) => ws.end(() => {
+    child.on('exit', (exitCode) => {
         fs.closeSync(fd);
         process.exit(exitCode);
-    }));
+    });
 };
 
 exports.jestRecorder = jestRecorder;
