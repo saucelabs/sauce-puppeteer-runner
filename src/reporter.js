@@ -37,36 +37,36 @@ for (const match of buildMatches) {
 // Keep these pieces of code for future integration.
 const createJobShell = async (tags, api) => {
     const body = {
-        'name': jobName,
-        'acl': [
+        name: jobName,
+        acl: [
           {
-            'type': 'username',
-            'value': process.env.SAUCE_USERNAME
+            type: 'username',
+            value: process.env.SAUCE_USERNAME
           }
         ],
-        //'start_time': startTime,
-        //'end_time': endTime,
-        'source': 'vdc', // will use devx
-        'platform': 'webdriver', // will use puppeteer
-        'status': 'complete',
-        'live': false,
-        'metadata': {},
-        'tags': tags,
-        'attributes': {
-            'container': false,
-            'browser': 'googlechrome',
-            'browser_version': '*',
-            'commands_not_successful': 1, // to be removed
-            'devx': true,
-            'os': 'test', // need collect
-            'performance_enabled': 'true', // to be removed
-            'public': 'team',
-            'record_logs': true, // to be removed
-            'record_mp4': 'true', // to be removed
-            'record_screenshots': 'true', // to be removed
-            'record_video': 'true', // to be removed
-            'video_url': 'test', // remove
-            'log_url': 'test' // remove
+        //'start_time: startTime,
+        //'end_time: endTime,
+        source: 'vdc', // will use devx
+        platform: 'webdriver', // will use puppeteer
+        status: 'complete',
+        live: false,
+        metadata: {},
+        tags: tags,
+        attributes: {
+            container: false,
+            browser: 'googlechrome',
+            browser_version: '*',
+            commands_not_successful: 1, // to be removed
+            devx: true,
+            os: 'test', // need collect
+            performance_enabled: 'true', // to be removed
+            public: 'team',
+            record_logs: true, // to be removed
+            record_mp4: 'true', // to be removed
+            record_screenshots: 'true', // to be removed
+            record_video: 'true', // to be removed
+            video_url: 'test', // remove
+            log_url: 'test' // remove
         }
     };
     
