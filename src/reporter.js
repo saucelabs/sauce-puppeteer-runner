@@ -132,7 +132,7 @@ module.exports = class TestrunnerReporter {
             tags = tags.split(",")
         }
 
-        if (!process.env.ENABLE_DATA_STORE) {
+        if (process.env.ENABLE_DATA_STORE) {
             this.sessionId = createJobShell(tags, api)
         } else {
             this.sessionId = createJobLegacy(tags, api)
