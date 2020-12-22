@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 
-const findProcess = require('find-process')
 const logger = require('@wdio/logger').default
 const SauceLabs = require('saucelabs').default
 const { remote } = require('webdriverio')
@@ -58,7 +57,7 @@ const createJobShell = async (tags, api) => {
         attributes: {
             container: false,
             browser: 'googlechrome',
-            browser_version: '*',
+            browser_version: '81.0.4044.138',
             commands_not_successful: 1, // to be removed
             devx: true,
             os: 'test', // need collect
@@ -112,7 +111,7 @@ const createJobWorkaround = async (tags, api, passed, startTime, endTime) => {
         tags,
         build,
         browserName: 'chrome',
-        browserVersion: '*',
+        browserVersion: '81.0.4044.138',
         platformName: '*' // in docker, no specified platform
     };
  
