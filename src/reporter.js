@@ -112,7 +112,7 @@ const createJobWorkaround = async (tags, api, passed, startTime, endTime) => {
         build,
         browserName: 'chrome',
         browserVersion: '81.0.4044.138',
-        platformName: '*' // in docker, no specified platform
+        platformName: 'sauce-devx-runner' // in docker, no specified platform
     };
  
     let sessionId;
