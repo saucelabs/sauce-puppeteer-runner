@@ -57,7 +57,7 @@ const createJobShell = async (tags, api) => {
         attributes: {
             container: false,
             browser: 'googlechrome',
-            browser_version: '81.0.4044.138',
+            browser_version: process.env.CHROME_VER,
             commands_not_successful: 1, // to be removed
             devx: true,
             os: 'test', // need collect
