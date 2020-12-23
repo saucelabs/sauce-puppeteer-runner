@@ -18,6 +18,7 @@ WORKDIR /home/seluser
 
 COPY package.json .
 COPY package-lock.json .
+ENV PUPPETEER_VERION=3.0.4
 
 RUN npm ci --production
 

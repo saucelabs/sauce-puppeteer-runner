@@ -104,15 +104,15 @@ const createJobWorkaround = async (tags, api, passed, startTime, endTime) => {
         startTime,
         endTime,
         framework: 'puppeteer',
-        frameworkVersion: '*', // collect
+        frameworkVersion: process.env.PUPPETEER_VERSION,
         status: 'complete',
         errors: [],
         passed,
         tags,
         build,
         browserName: 'chrome',
-        browserVersion: '81.0.4044.138',
-        platformName: 'sauce-devx-runner' // in docker, no specified platform
+        browserVersion: process.env.CHROME_VER,
+        platformName: process.env.SAUCE_IMAGE_NAME
     };
  
     let sessionId;
