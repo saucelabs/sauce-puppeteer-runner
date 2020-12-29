@@ -19,6 +19,8 @@ WORKDIR /home/seluser
 COPY package.json .
 COPY package-lock.json .
 ENV PUPPETEER_VERION=3.0.4
+ENV IMAGE_NAME=saucelabs/stt-puppeteer-jest-node
+ENV IMAGE_TAG=v0.2.2
 
 RUN npm ci --production
 
