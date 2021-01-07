@@ -12,11 +12,13 @@ const { LOG_FILES, HOME_DIR } = require('./constants')
 const log = logger('reporter')
 
 const region = process.env.SAUCE_REGION || 'us-west-1'
+const tld = region === 'staging' ? 'net' : 'com'
 
 const api = new SauceLabs({
     user: process.env.SAUCE_USERNAME,
     key: process.env.SAUCE_ACCESS_KEY,
-    region
+    region,
+    tld
 })
 
 // SAUCE_JOB_NAME is only available for saucectl >= 0.16, hence the fallback
@@ -98,10 +100,13 @@ const createJobLegacy = async (tags, api) => {
      * invalid capabilities
      * ToDo(Christian): remove once own testrunner job API is available
      */
+    const hostname = `ondemand.${region}.saucelabs.${tld}`;
     await remote({
         user: process.env.SAUCE_USERNAME,
         key: process.env.SAUCE_ACCESS_KEY,
-        region: region,
+        region,
+        tld,
+        hostname,
         connectionRetryCount: 0,
         logLevel: 'silent',
         capabilities: {
@@ -197,7 +202,7 @@ module.exports = class TestrunnerReporter {
                 domain = "saucelabs.com"
                 break
             default:
-                domain = `${region}.saucelabs.com`
+                domain = `${region}.saucelabs.${tld}`
         }
 
         console.log(`\nOpen job details page: https://app.${domain}/tests/${sessionId}\n`)
