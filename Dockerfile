@@ -1,4 +1,4 @@
-FROM saucelabs/testrunner-image:v0.1.0
+FROM saucelabs/testrunner-image:v0.1.1
 
 #================
 # Install Node.JS
@@ -18,6 +18,10 @@ WORKDIR /home/seluser
 
 COPY package.json .
 COPY package-lock.json .
+ENV PUPPETEER_VERION=3.0.4
+ENV IMAGE_NAME=saucelabs/stt-puppeteer-jest-node
+ARG BUILD_TAG
+ENV IMAGE_TAG=${BUILD_TAG}
 
 RUN npm ci --production
 

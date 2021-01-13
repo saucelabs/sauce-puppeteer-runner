@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 
-const findProcess = require('find-process')
 const logger = require('@wdio/logger').default
 const SauceLabs = require('saucelabs').default
 const { remote } = require('webdriverio')
@@ -24,6 +23,7 @@ const api = new SauceLabs({
 // SAUCE_JOB_NAME is only available for saucectl >= 0.16, hence the fallback
 const jobName = process.env.SAUCE_JOB_NAME || `DevX Puppeteer Test Run - ${(new Date()).getTime()}`;
 let build = process.env.SAUCE_BUILD_NAME
+let startTime, endTime;
 
 /**
  * replace placeholders (e.g. $BUILD_ID) with environment values
@@ -57,7 +57,7 @@ const createJobShell = async (tags, api) => {
         attributes: {
             container: false,
             browser: 'googlechrome',
-            browser_version: '*',
+            browser_version: process.env.CHROME_VER,
             commands_not_successful: 1, // to be removed
             devx: true,
             os: 'test', // need collect
@@ -86,6 +86,47 @@ const createJobShell = async (tags, api) => {
   
     return sessionId;
 }
+
+
+// TODO Tian: this method is a temporary solution for creating jobs via test-composer.
+// Once the global data store is ready, this method will be deprecated.
+const createJobWorkaround = async (tags, api, passed, startTime, endTime) => {
+    /**
+     * don't try to create a job if no credentials are set
+     */
+    if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
+        return;
+    }
+
+    const body = {
+        name: jobName,
+        user: process.env.SAUCE_USERNAME,
+        startTime,
+        endTime,
+        framework: 'puppeteer',
+        frameworkVersion: process.env.PUPPETEER_VERSION,
+        status: 'complete',
+        errors: [],
+        passed,
+        tags,
+        build,
+        browserName: 'chrome',
+        browserVersion: process.env.CHROME_VER,
+        platformName: process.env.IMAGE_NAME + '/' + process.env.IMAGE_TAG
+    };
+ 
+    let sessionId;
+    await api.createJob(
+        body
+    ).then(
+        (resp) => {
+          sessionId = resp.ID;
+        },
+        (e) => console.error('Create job failed: ', e.stack)
+    );
+    
+    return sessionId || 0;
+};
 
 const createJobLegacy = async (tags, api) => {
     /**
@@ -132,28 +173,30 @@ const createJobLegacy = async (tags, api) => {
 module.exports = class TestrunnerReporter {
     constructor () {
         log.info('Create job shell')
-        let tags = process.env.SAUCE_TAGS
-        if (tags) {
-            tags = tags.split(",")
-        }
-
-        if (process.env.ENABLE_DATA_STORE) {
-            this.sessionId = createJobShell(tags, api)
-        } else {
-            this.sessionId = createJobLegacy(tags, api)
-        }
-    }
+   }
 
     async onRunStart () {
         log.info('Start video capturing')
+        startTime = new Date().toISOString()
         await exec('start-video')
     }
 
     async onRunComplete (test, { testResults, numFailedTests }) {
         log.info('Finished testrun!')
+        endTime = new Date().toISOString()
 
         const hasPassed = numFailedTests === 0
-        const sessionId = await this.sessionId
+        let tags = process.env.SAUCE_TAGS
+        if (tags) {
+            tags = tags.split(",")
+        }
+
+        let sessionId;
+        if (process.env.ENABLE_DATA_STORE) {
+            sessionId = await createJobShell(tags, api)
+        } else {
+            sessionId = await createJobWorkaround(tags, api, hasPassed, startTime, endTime)
+        }
 
         /**
          * only upload assets if a session was initiated before
@@ -170,8 +213,7 @@ module.exports = class TestrunnerReporter {
         const containterLogFiles = LOG_FILES.filter(
             (path) => fs.existsSync(path))
 
-        await Promise.all([
-            api.uploadJobAssets(
+        await api.uploadJobAssets(
                 sessionId,
                 {
                     files: [
@@ -188,12 +230,7 @@ module.exports = class TestrunnerReporter {
                 }
               },
               (e) => log.error('upload failed:', e.stack)
-            ),
-            api.updateJob(process.env.SAUCE_USERNAME, sessionId, {
-                name: jobName,
-                passed: hasPassed
-            })
-        ])
+            )
 
         let domain
 

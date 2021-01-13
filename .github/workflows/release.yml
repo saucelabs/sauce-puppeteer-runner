@@ -38,6 +38,8 @@ jobs:
             saucelabs/stt-puppeteer-jest-node:latest
             saucelabs/stt-puppeteer-jest-node:${{ steps.prep.outputs.version }}
           cache_froms: latest
+          build-args: |
+            BUILD_TAG=${{ steps.prep.outputs.version }}
 
   release-template-bundle:
     runs-on: ubuntu-latest
