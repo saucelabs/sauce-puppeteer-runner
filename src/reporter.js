@@ -9,7 +9,10 @@ const { exec } = require('./utils')
 const { LOG_FILES, HOME_DIR } = require('./constants')
 
 const log = logger('reporter')
-const { updateExportedValueToSaucectl } = require('./saucectl-exporter')
+const { updateExportedValue } = require('sauce-testrunner-utils').saucectl
+
+// Path has to match the value of the Dockerfile label com.saucelabs.job-info !
+const SAUCECTL_OUTPUT_FILE = '/tmp/output.json';
 
 const region = process.env.SAUCE_REGION || 'us-west-1'
 const tld = region === 'staging' ? 'net' : 'com'
@@ -208,7 +211,7 @@ module.exports = class TestrunnerReporter {
          * only upload assets if a session was initiated before
          */
         if (!sessionId) {
-            updateExportedValueToSaucectl({ reportingSucceeded });
+            updateExportedValue(SAUCECTL_OUTPUT_FILE, { reportingSucceeded });
             return
         }
 
@@ -250,6 +253,6 @@ module.exports = class TestrunnerReporter {
         }
         jobDetailsUrl = `https://app.${domain}/tests/${sessionId}`;
         console.log(`\nOpen job details page: ${jobDetailsUrl}\n`)
-        updateExportedValueToSaucectl({ jobDetailsUrl, reportingSucceeded });
+        updateExportedValue(SAUCECTL_OUTPUT_FILE, { jobDetailsUrl, reportingSucceeded });
     }
 }
