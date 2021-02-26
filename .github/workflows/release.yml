@@ -155,7 +155,7 @@ jobs:
 
   publish-release:
     runs-on: ubuntu-latest
-    needs: [release-docker,  release-template-bundle, release-windows-bundle, release-macos-bundle]
+    needs: [release-docker,  release-template-bundle]
     steps:
       - name: Find matching draft tag
         id: prep
