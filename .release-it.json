@@ -1,0 +1,17 @@
+{
+    "git": {
+        "commit": false,
+        "tag": true,
+        "tagName": "v${version}"
+    },
+    "npm": {
+        "publish": false,
+        "ignoreVersion": true
+    },
+    "github": {
+        "release": true,
+        "draft": true,
+        "releaseName": "v${version}",
+        "releaseNotes": "./.github/helpers/generate-release-notes.sh ${latestVersion} ${version}"
+    }
+}
