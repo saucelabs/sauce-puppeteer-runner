@@ -97,7 +97,7 @@ jobs:
           file: ./Dockerfile
           tags: |
             saucelabs/stt-puppeteer-jest-node:latest
-            saucelabs/stt-puppeteer-jest:${{ steps.prep.outputs.version }}
+            saucelabs/stt-puppeteer-jest-node:${{ steps.prep.outputs.version }}
           build-args: |
             BUILD_TAG=${{ steps.prep.outputs.version }}
 
