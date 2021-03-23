@@ -1,11 +1,12 @@
 const fs = require('fs')
 const path = require('path')
+const {HOME_DIR} = require("./constants");
 
 const logger = require('@wdio/logger').default
 const SauceLabs = require('saucelabs').default
 
 const { exec } = require('./utils')
-const { LOG_FILES, HOME_DIR } = require('./constants')
+const { LOG_FILES } = require('./constants')
 
 const log = logger('reporter')
 const { updateExportedValue } = require('sauce-testrunner-utils').saucectl
@@ -144,10 +145,6 @@ module.exports = class TestrunnerReporter {
 
     async onRunComplete (test, { testResults, numFailedTests }) {
         log.info('Finished testrun!')
-        if (process.env.SAUCE_USERNAME === '' || process.env.SAUCE_ACCESS_KEY === '') {
-            console.log('Skipping asset uploads! Remember to setup your SAUCE_USERNAME/SAUCE_ACCESS_KEY');
-            return;
-        }
         endTime = new Date().toISOString()
 
         const hasPassed = numFailedTests === 0
@@ -174,18 +171,17 @@ module.exports = class TestrunnerReporter {
 
         await exec('stop-video')
 
-        const logFilePath = path.join(HOME_DIR, 'log.json')
-        fs.writeFileSync(logFilePath, JSON.stringify(testResults, null, 4))
+        const logFilePath = path.join(HOME_DIR, 'log.json');
+        fs.writeFileSync(logFilePath, JSON.stringify(testResults, null, 4));
 
-        const containterLogFiles = LOG_FILES.filter(
-            (path) => fs.existsSync(path))
+        const assets = LOG_FILES.filter((path) => fs.existsSync(path))
 
         await api.uploadJobAssets(
                 sessionId,
                 {
                     files: [
                         logFilePath,
-                        ...containterLogFiles
+                        ...assets
                     ]
                 }
             ).then(
@@ -194,12 +190,15 @@ module.exports = class TestrunnerReporter {
                   for (let err of resp.errors) {
                     console.error(err);
                   }
+                  return;
                 }
+
+                reportingSucceeded = true;
               },
               (e) => log.error('upload failed:', e.stack)
             )
 
-        let domain
+        let domain;
 
         switch (region) {
             case "us-west-1":

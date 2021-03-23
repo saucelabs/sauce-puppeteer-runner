@@ -29,7 +29,12 @@ COPY --chown=seluser:seluser . .
 RUN mkdir tests/
 
 # Workaround for permissions in CI if run with a different user
-RUN chmod 777 -R /home/seluser/
+#RUN chmod 777 -R /home/seluser/
+
+# Let saucectl know where to mount files
+RUN mkdir -p /home/seluser/__project__/ && chown seluser:seluser /home/seluser/__project__/
+LABEL com.saucelabs.project-dir=/home/seluser/__project__/
+ENV SAUCE_PROJECT_DIR=/home/seluser/__project__/
 
 # Let saucectl know where to read job details url
 LABEL com.saucelabs.job-info=/tmp/output.json
