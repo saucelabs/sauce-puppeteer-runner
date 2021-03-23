@@ -3,7 +3,6 @@ const path = require('path')
 
 const logger = require('@wdio/logger').default
 const SauceLabs = require('saucelabs').default
-const { remote } = require('webdriverio')
 
 const { exec } = require('./utils')
 const { LOG_FILES, HOME_DIR } = require('./constants')
@@ -75,7 +74,7 @@ const createJobShell = async (tags, api) => {
             log_url: 'test' // remove
         }
     };
-    
+
     let sessionId;
     await Promise.all([
       api.createResultJob(
@@ -87,7 +86,7 @@ const createJobShell = async (tags, api) => {
         (e) => console.error('Create job failed: ', e.stack)
       )
     ]);
-  
+
     return sessionId;
 }
 
@@ -128,51 +127,9 @@ const createJobWorkaround = async (tags, api, passed, startTime, endTime) => {
         },
         (e) => console.error('Create job failed: ', e.stack)
     );
-    
+
     return sessionId || 0;
 };
-
-const createJobLegacy = async (tags, api) => {
-    /**
-     * don't try to create a job if no credentials are set
-     */
-    if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
-        return
-    }
-
-    /**
-     * create a job shell by trying to initialise a session with
-     * invalid capabilities
-     * ToDo(Christian): remove once own testrunner job API is available
-     */
-    const hostname = `ondemand.${region}.saucelabs.${tld}`;
-    await remote({
-        user: process.env.SAUCE_USERNAME,
-        key: process.env.SAUCE_ACCESS_KEY,
-        region,
-        tld,
-        hostname,
-        connectionRetryCount: 0,
-        logLevel: 'silent',
-        capabilities: {
-            browserName: 'Chrome',
-            platformName: '*',
-            browserVersion: '*',
-            'sauce:options': {
-                devX: true,
-                name: jobName,
-                tags: tags,
-                build
-            }
-        }
-    }).catch((err) => err)
-
-    const { jobs } = await api.listJobs(
-        process.env.SAUCE_USERNAME,
-        { limit: 1, full: true, name: jobName }
-    )
-    return jobs && jobs.length && jobs[0].id
-}
 
 module.exports = class TestrunnerReporter {
     constructor () {
