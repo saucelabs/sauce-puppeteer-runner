@@ -26,10 +26,6 @@ ENV IMAGE_TAG=${BUILD_TAG}
 RUN npm ci --production
 
 COPY --chown=seluser:seluser . .
-RUN mkdir tests/
-
-# Workaround for permissions in CI if run with a different user
-#RUN chmod 777 -R /home/seluser/
 
 # Let saucectl know where to mount files
 RUN mkdir -p /home/seluser/__project__/ && chown seluser:seluser /home/seluser/__project__/
