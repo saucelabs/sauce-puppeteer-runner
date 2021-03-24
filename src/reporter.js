@@ -5,11 +5,11 @@ const {HOME_DIR} = require("./constants");
 const logger = require('@wdio/logger').default
 const SauceLabs = require('saucelabs').default
 
-const { exec } = require('./utils')
-const { LOG_FILES } = require('./constants')
+const {exec} = require('./utils')
+const {LOG_FILES} = require('./constants')
 
 const log = logger('reporter')
-const { updateExportedValue } = require('sauce-testrunner-utils').saucectl
+const {updateExportedValue} = require('sauce-testrunner-utils').saucectl
 
 // Path has to match the value of the Dockerfile label com.saucelabs.job-info !
 const SAUCECTL_OUTPUT_FILE = '/tmp/output.json';
@@ -45,10 +45,10 @@ const createJobShell = async (tags, api) => {
     const body = {
         name: jobName,
         acl: [
-          {
-            type: 'username',
-            value: process.env.SAUCE_USERNAME
-          }
+            {
+                type: 'username',
+                value: process.env.SAUCE_USERNAME
+            }
         ],
         //'start_time: startTime,
         //'end_time: endTime,
@@ -78,14 +78,14 @@ const createJobShell = async (tags, api) => {
 
     let sessionId;
     await Promise.all([
-      api.createResultJob(
-        body
-      ).then(
-        (resp) => {
-          sessionId = resp.id;
-        },
-        (e) => console.error('Create job failed: ', e.stack)
-      )
+        api.createResultJob(
+            body
+        ).then(
+            (resp) => {
+                sessionId = resp.id;
+            },
+            (e) => console.error('Create job failed: ', e.stack)
+        )
     ]);
 
     return sessionId;
@@ -124,7 +124,7 @@ const createJobWorkaround = async (tags, api, passed, startTime, endTime) => {
         body
     ).then(
         (resp) => {
-          sessionId = resp.ID;
+            sessionId = resp.ID;
         },
         (e) => console.error('Create job failed: ', e.stack)
     );
@@ -133,22 +133,45 @@ const createJobWorkaround = async (tags, api, passed, startTime, endTime) => {
 };
 
 module.exports = class TestrunnerReporter {
-    constructor () {
-        log.info('Create job shell')
-   }
+    constructor() {
 
-    async onRunStart () {
-        log.info('Start video capturing')
-        startTime = new Date().toISOString()
-        await exec('start-video')
     }
 
-    async onRunComplete (test, { testResults, numFailedTests }) {
+    async onRunStart() {
+        startTime = new Date().toISOString()
+        await this.startVideo()
+    }
+
+    async startVideo() {
+        if (this.isVideoRecordingEnabled()) {
+            await exec('start-video')
+        }
+    }
+
+    async stopVideo() {
+        if (this.isVideoRecordingEnabled()) {
+            await exec('stop-video')
+        }
+    }
+
+    isVideoRecordingEnabled() {
+        return !process.env.SAUCE_VM || process.env.SAUCE_VIDEO_RECORD
+    }
+
+    async onRunComplete(test, {testResults, numFailedTests}) {
         log.info('Finished testrun!')
         endTime = new Date().toISOString()
 
         const hasPassed = numFailedTests === 0
-        let tags = process.env.SAUCE_TAGS
+        const logFilePath = path.join(HOME_DIR, 'log.json');
+        fs.writeFileSync(logFilePath, JSON.stringify(testResults, null, 4));
+
+        // No need to upload any assets on a sauce VM. That's handled elsewhere.
+        if (process.env.SAUCE_VM) {
+            return;
+        }
+
+        let tags = process.env.SAUCE_TAGS // FIXME this should come from the sauce-runner.json, not via env vars
         if (tags) {
             tags = tags.split(",")
         }
@@ -165,38 +188,35 @@ module.exports = class TestrunnerReporter {
          * only upload assets if a session was initiated before
          */
         if (!sessionId) {
-            updateExportedValue(SAUCECTL_OUTPUT_FILE, { reportingSucceeded });
+            updateExportedValue(SAUCECTL_OUTPUT_FILE, {reportingSucceeded});
             return
         }
 
-        await exec('stop-video')
-
-        const logFilePath = path.join(HOME_DIR, 'log.json');
-        fs.writeFileSync(logFilePath, JSON.stringify(testResults, null, 4));
+        await this.stopVideo()
 
         const assets = LOG_FILES.filter((path) => fs.existsSync(path))
 
         await api.uploadJobAssets(
-                sessionId,
-                {
-                    files: [
-                        logFilePath,
-                        ...assets
-                    ]
-                }
-            ).then(
-              (resp) => {
+            sessionId,
+            {
+                files: [
+                    logFilePath,
+                    ...assets
+                ]
+            }
+        ).then(
+            (resp) => {
                 if (resp.errors) {
-                  for (let err of resp.errors) {
-                    console.error(err);
-                  }
-                  return;
+                    for (let err of resp.errors) {
+                        console.error(err);
+                    }
+                    return;
                 }
 
                 reportingSucceeded = true;
-              },
-              (e) => log.error('upload failed:', e.stack)
-            )
+            },
+            (e) => log.error('upload failed:', e.stack)
+        )
 
         let domain;
 
@@ -209,6 +229,6 @@ module.exports = class TestrunnerReporter {
         }
         jobDetailsUrl = `https://app.${domain}/tests/${sessionId}`;
         console.log(`\nOpen job details page: ${jobDetailsUrl}\n`)
-        updateExportedValue(SAUCECTL_OUTPUT_FILE, { jobDetailsUrl, reportingSucceeded });
+        updateExportedValue(SAUCECTL_OUTPUT_FILE, {jobDetailsUrl, reportingSucceeded});
     }
 }
