@@ -1,4 +1,4 @@
-name: Docker Build
+name: Docker Test
 
 on:
   pull_request:
@@ -6,14 +6,12 @@ on:
       - master
 
 jobs:
-  build:
+  saucectl-docker-run:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2
-      -
-        uses: docker/build-push-action@v1
+      - uses: actions/checkout@v2
+
+      - uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -21,24 +19,16 @@ jobs:
           tag_with_ref: true
           cache_froms: saucelabs/stt-puppeteer-jest-node:latest
           push: false
-      
-      - uses: actions/setup-go@v2
+          tags: local
+
+      - uses: saucelabs/saucectl-run-action@v1
         with:
-          go-version: '1.16.0'
+          skip-run: true
+          saucectl-version: v0.34.0
 
-      # Checkout the latest saucectl
-      - uses: actions/checkout@v2
-        with:
-          repository: saucelabs/saucectl
-          path: saucectl
-
-      # Build saucectl
-      - run: pushd saucectl && make build && popd
-        name: Build Saucectl and run E2E tests
-
-      # Run e2e tests
-      - run: bash ./tests/e2e/run.sh
+      - name: Run tests
+        working-directory: tests/e2e/
+        run: saucectl run --test-env docker
         env:
-          SKIP_CI: true
-          SAUCE_CTL_BINARY: ./saucectl/saucectl
-        name: Build Saucectl and run E2E tests
+          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}

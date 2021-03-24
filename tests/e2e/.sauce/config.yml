@@ -1,0 +1,19 @@
+apiVersion: v1alpha
+kind: puppeteer
+sauce:
+  region: us-west-1
+  concurrency: 2
+  metadata:
+    name: Puppeteer Runner Test Pipeline
+    tags:
+      - e2e
+    build: CI $CI_COMMIT_SHORT_SHA
+rootDir: ./
+puppeteer:
+  version: 3.0.4
+suites:
+  - name: "chrome"
+    testMatch: ["**/*.test.js"]
+    browser: "chrome"
+docker:
+  image: saucelabs/stt-puppeteer-jest-node:local
