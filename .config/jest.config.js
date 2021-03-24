@@ -1,61 +1,31 @@
-const path = require('path')
-const fs = require('fs');
-const yaml = require('js-yaml');
-const {promisify} = require('util');
-const {HOME_DIR} = require('../src/constants');
-let { exec } = require('child_process');
+const {HOME_DIR, PROJECT_DIR} = require('../src/constants');
+const {getSuite, loadRunConfig} = require('sauce-testrunner-utils');
 
-// Promisify callback functions
-const fileExists = promisify(fs.exists)
-const readFile = promisify(fs.readFile)
-exec = promisify(exec);
+function createJestConfig(runCfgPath, suiteName) {
+    try {
+        const runCfg = loadRunConfig(runCfgPath);
+        const suite = getSuite(runCfg, suiteName);
 
-// the default test matching behavior for versions <= v0.1.4
-const DefaultRunCfg = {
-    projectPath: `${HOME_DIR}`,
-    match: [
-        `${HOME_DIR}/tests/?(*.)+(spec|test).js?(x)`,
-        `${HOME_DIR}/tests/**/?(*.)+(spec|test).js?(x)`
-    ]
-}
-
-async function loadRunConfig(cfgPath) {
-    if (await fileExists(cfgPath)) {
-        return yaml.safeLoad(await readFile(cfgPath, 'utf8'));
+        return {
+            rootDir: PROJECT_DIR,
+            testEnvironment: 'node',
+            setupFilesAfterEnv: [
+                `${HOME_DIR}/src/jest.setup.js`,
+                `${HOME_DIR}/src/jest.teardown.js`
+            ],
+            reporters: [
+                `default`,
+                `${HOME_DIR}/src/reporter.js`
+            ],
+            testMatch: suite.testMatch,
+        };
+    } catch (e) {
+        console.error(`Failed to prepare jest configuration. Reason: ${e.message}`);
     }
-    console.log(`Run config (${cfgPath}) unavailable. Loading defaults.`)
-
-    return DefaultRunCfg
-}
-
-function resolveTestMatches(runCfg) {
-    return runCfg.match.map(
-        p => {
-            if (path.isAbsolute(p)) {
-                return p
-            }
-            return path.join(runCfg.projectPath, p)
-        }
-    );
 }
 
 module.exports = async () => {
-    const runCfgPath = path.join(HOME_DIR, 'run.yaml')
-    const runCfg = await loadRunConfig(runCfgPath)
-
-    const testMatch = resolveTestMatches(runCfg);
-
-    return {
-        rootDir: HOME_DIR,
-        testEnvironment: 'node',
-        setupFilesAfterEnv: [
-            `${HOME_DIR}/src/jest.setup.js`,
-            `${HOME_DIR}/src/jest.teardown.js`
-        ],
-        reporters: [
-            `default`,
-            `${HOME_DIR}/src/reporter.js`
-        ],
-        testMatch,
-    };
+    const runCfgPath = process.env['SAUCE_RUNNER_CONFIG']
+    const suiteName = process.env['SAUCE_SUITE']
+    return createJestConfig(runCfgPath, suiteName)
 };

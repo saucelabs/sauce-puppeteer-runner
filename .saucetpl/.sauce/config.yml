@@ -1,18 +1,19 @@
 apiVersion: v1alpha
-metadata:
-  name: Feature XYZ
-  tags:
-    - e2e
-    - release team
-    - other tag
-  build: Release $CI_COMMIT_SHORT_SHA
-files:
-  - tests/example.test.js
-suites:
-  - name: "saucy test"
-    match: ".*.(spec|test).js$"
-image:
-  base: saucelabs/stt-puppeteer-jest-node
-  version: ##VERSION##
+kind: puppeteer
 sauce:
   region: us-west-1
+  concurrency: 2
+  metadata:
+    name: Testing Puppeteer Support
+    tags:
+      - e2e
+      - release team
+      - other tag
+    build: Release $CI_COMMIT_SHORT_SHA
+rootDir: ./
+puppeteer:
+  version: 3.0.4
+suites:
+  - name: "chrome"
+    testMatch: ["**/*.test.js"]
+    browser: "chrome"
