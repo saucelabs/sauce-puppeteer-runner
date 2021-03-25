@@ -4,8 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const stream = require('stream');
 const child_process = require('child_process');
-const {ASSETS_DIR} = require("./constants");
-const {getArgs, loadRunConfig, getAbsolutePath} = require('sauce-testrunner-utils');
+const {getRunnerConfig} = require("./utils");
+const {getArgs} = require('sauce-testrunner-utils');
 
 const jestRecorder = async () => {
     const fd = fs.openSync(path.join(__dirname, '..', 'console.log'), 'w+', 0o644);
@@ -16,11 +16,10 @@ const jestRecorder = async () => {
     });
 
     const {runCfgPath, suiteName} = getArgs();
-    const runCfgAbsolutePath = getAbsolutePath(runCfgPath);
-    const runCfg = await loadRunConfig(runCfgAbsolutePath);
+    process.env.SAUCE_RUNNER_CONFIG = runCfgPath
+    process.env.SAUCE_SUITE = suiteName
+    const runCfg = getRunnerConfig();
     runCfg.path = runCfgPath;
-    process.env['SAUCE_RUNNER_CONFIG'] = runCfgPath
-    process.env['SAUCE_SUITE'] = suiteName
 
     const child = child_process.spawn('jest', ['--no-colors',
         '--config=./.config/jest.config.js', '--runInBand', '--forceExit']);

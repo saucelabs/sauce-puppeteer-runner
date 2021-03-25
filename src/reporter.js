@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const {getRunnerConfig} = require("./utils");
 const {getSuite, loadRunConfig} = require("sauce-testrunner-utils");
 const {HOME_DIR} = require("./constants");
 
@@ -7,7 +8,7 @@ const logger = require('@wdio/logger').default
 const SauceLabs = require('saucelabs').default
 
 const {exec} = require('./utils')
-const {LOG_FILES} = require('./constants')
+const {LOG_FILES, SUITE_NAME} = require('./constants')
 
 const log = logger('reporter')
 const {updateExportedValue} = require('sauce-testrunner-utils').saucectl
@@ -39,10 +40,8 @@ for (const match of buildMatches) {
     build = build.replace(match, replacement || '')
 }
 
-const runCfgPath = process.env['SAUCE_RUNNER_CONFIG']
-const suiteName = process.env['SAUCE_SUITE']
-const runCfg = loadRunConfig(runCfgPath);
-const suite = getSuite(runCfg, suiteName);
+const runCfg = getRunnerConfig();
+const suite = getSuite(runCfg, SUITE_NAME);
 
 // NOTE: this function is not available currently.
 // It will be ready once data store API actually works.

@@ -8,10 +8,11 @@ const debug = require(
         'debug'
     )
 )
-
-const { CHROME_DEFAULT_PATH, DEFAULT_JEST_TIMEOUT, CHROME_ARGS, FIREFOX_ARGS} = require('./constants')
-const {getSuite, loadRunConfig} = require('sauce-testrunner-utils');
-const { logHelper } = require('./utils')
+const {SUITE_NAME} = require("./constants");
+const {getRunnerConfig} = require("./utils");
+const {DEFAULT_JEST_TIMEOUT, CHROME_ARGS, FIREFOX_ARGS} = require('./constants')
+const {getSuite} = require('sauce-testrunner-utils');
+const {logHelper} = require('./utils')
 debug.log = logHelper
 
 const testTimeout = (parseInt(process.env.TEST_TIMEOUT) || DEFAULT_JEST_TIMEOUT)
@@ -19,10 +20,8 @@ process.stdout.write(`Setting test timeout to ${testTimeout}sec\n\n`);
 jest.setTimeout(testTimeout * 1000)
 
 beforeAll(async () => {
-    const runCfgPath = process.env['SAUCE_RUNNER_CONFIG']
-    const suiteName = process.env['SAUCE_SUITE']
-    const runCfg = loadRunConfig(runCfgPath);
-    const suite = getSuite(runCfg, suiteName);
+    const runCfg = getRunnerConfig();
+    const suite = getSuite(runCfg, SUITE_NAME);
 
     const opts = getPuppeteerLaunchOptions(suite.browser)
 
@@ -58,7 +57,7 @@ function getPuppeteerLaunchOptions(browser) {
 }
 
 const monkeyPatchedTest = (origFn) => (testName, testFn) => {
-    function patchedFn (...args) {
+    function patchedFn(...args) {
         global.logs.push({
             status: 'info',
             message: testName,
@@ -66,6 +65,7 @@ const monkeyPatchedTest = (origFn) => (testName, testFn) => {
         })
         return testFn.call(this, ...args)
     }
+
     return origFn(testName, patchedFn)
 }
 
