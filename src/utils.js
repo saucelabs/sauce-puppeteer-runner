@@ -17,8 +17,9 @@ exports.getRunnerConfig = () => {
         return runCfg
     }
 
-    const runCfgPath = process.env['SAUCE_RUNNER_CONFIG']
+    const runCfgPath = process.env.SAUCE_RUNNER_CONFIG;
     runCfg = loadRunConfig(runCfgPath);
+    runCfg.path = runCfgPath;
     return runCfg
 }
 

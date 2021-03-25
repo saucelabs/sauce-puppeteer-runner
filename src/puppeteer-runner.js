@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const stream = require('stream');
 const child_process = require('child_process');
-const {getRunnerConfig} = require("./utils");
 const {getArgs} = require('sauce-testrunner-utils');
 
 const puppeteerRunner = async () => {
@@ -16,10 +15,9 @@ const puppeteerRunner = async () => {
     });
 
     const {runCfgPath, suiteName} = getArgs();
+    // Prepare the context to be used by other jest related files, as we cannot pass settings to them directly.
     process.env.SAUCE_RUNNER_CONFIG = runCfgPath
     process.env.SAUCE_SUITE = suiteName
-    const runCfg = getRunnerConfig();
-    runCfg.path = runCfgPath;
 
     const child = child_process.spawn('jest', ['--no-colors',
         '--config=./.config/jest.config.js', '--runInBand', '--forceExit']);
