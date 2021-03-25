@@ -14,3 +14,7 @@ exports.CHROME_ARGS = [
     '--start-fullscreen',
     '--remote-debugging-port=9223'
 ]
+
+exports.FIREFOX_ARGS = [
+    '-browser'
+]

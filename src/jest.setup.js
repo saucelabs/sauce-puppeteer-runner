@@ -9,7 +9,8 @@ const debug = require(
     )
 )
 
-const { CHROME_DEFAULT_PATH, DEFAULT_JEST_TIMEOUT, CHROME_ARGS } = require('./constants')
+const { CHROME_DEFAULT_PATH, DEFAULT_JEST_TIMEOUT, CHROME_ARGS, FIREFOX_ARGS} = require('./constants')
+const {getSuite, loadRunConfig} = require('sauce-testrunner-utils');
 const { logHelper } = require('./utils')
 debug.log = logHelper
 
@@ -18,12 +19,43 @@ process.stdout.write(`Setting test timeout to ${testTimeout}sec\n\n`);
 jest.setTimeout(testTimeout * 1000)
 
 beforeAll(async () => {
-    global.browser = await puppeteer.launch({
-        headless: !Boolean(process.env.DISPLAY),
-        args: CHROME_ARGS,
-        executablePath: process.env.CHROME_BINARY_PATH || CHROME_DEFAULT_PATH
-    })
+    const runCfgPath = process.env['SAUCE_RUNNER_CONFIG']
+    const suiteName = process.env['SAUCE_SUITE']
+    const runCfg = loadRunConfig(runCfgPath);
+    const suite = getSuite(runCfg, suiteName);
+
+    const opts = getPuppeteerLaunchOptions(suite.browser)
+
+    global.browser = await puppeteer.launch(opts);
 })
+
+function getPuppeteerLaunchOptions(browser) {
+    const chromeOpts = {
+        args: CHROME_ARGS,
+        product: "chrome",
+        executablePath: process.env.CHROME_BINARY_PATH
+    }
+
+    const firefoxOpts = {
+        args: FIREFOX_ARGS,
+        product: "firefox",
+        executablePath: process.env.FIREFOX_BINARY_PATH
+    }
+
+    let opts = {
+        headless: !Boolean(process.env.DISPLAY),
+    }
+
+    if (browser === "chrome") {
+        opts = Object.assign(opts, chromeOpts)
+    }
+
+    if (browser === "firefox") {
+        opts = Object.assign(opts, firefoxOpts)
+    }
+
+    return opts
+}
 
 const monkeyPatchedTest = (origFn) => (testName, testFn) => {
     function patchedFn (...args) {

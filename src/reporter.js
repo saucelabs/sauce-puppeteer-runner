@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const {getSuite, loadRunConfig} = require("sauce-testrunner-utils");
 const {HOME_DIR} = require("./constants");
 
 const logger = require('@wdio/logger').default
@@ -37,6 +38,11 @@ for (const match of buildMatches) {
     const replacement = process.env[match.slice(1)]
     build = build.replace(match, replacement || '')
 }
+
+const runCfgPath = process.env['SAUCE_RUNNER_CONFIG']
+const suiteName = process.env['SAUCE_SUITE']
+const runCfg = loadRunConfig(runCfgPath);
+const suite = getSuite(runCfg, suiteName);
 
 // NOTE: this function is not available currently.
 // It will be ready once data store API actually works.
@@ -102,6 +108,18 @@ const createJobWorkaround = async (tags, api, passed, startTime, endTime) => {
         return;
     }
 
+    let browserVersion;
+    switch (suite.browser.toLowerCase()) {
+        case 'firefox':
+            browserVersion = process.env.FF_VER;
+            break;
+        case 'chrome':
+            browserVersion = process.env.CHROME_VER;
+            break;
+        default:
+            browserVersion = '*';
+    }
+
     const body = {
         name: jobName,
         user: process.env.SAUCE_USERNAME,
@@ -114,8 +132,8 @@ const createJobWorkaround = async (tags, api, passed, startTime, endTime) => {
         passed,
         tags,
         build,
-        browserName: 'chrome',
-        browserVersion: process.env.CHROME_VER,
+        browserName: suite.browser,
+        browserVersion: browserVersion,
         platformName: process.env.IMAGE_NAME + ':' + process.env.IMAGE_TAG
     };
 
