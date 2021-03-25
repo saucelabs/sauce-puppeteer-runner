@@ -45,12 +45,15 @@ function getPuppeteerLaunchOptions(browser) {
         headless: !Boolean(process.env.DISPLAY),
     }
 
-    if (browser === "chrome") {
-        opts = Object.assign(opts, chromeOpts)
-    }
-
-    if (browser === "firefox") {
-        opts = Object.assign(opts, firefoxOpts)
+    switch (browser.toLowerCase()) {
+        case 'chrome':
+            opts = Object.assign(opts, chromeOpts);
+            break;
+        case 'firefox':
+            opts = Object.assign(opts, firefoxOpts);
+            break;
+        default:
+            throw new Error(`Unsupported browser: ${browser}`);
     }
 
     return opts
