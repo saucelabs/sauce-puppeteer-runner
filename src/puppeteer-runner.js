@@ -7,7 +7,7 @@ const child_process = require('child_process');
 const {getRunnerConfig} = require("./utils");
 const {getArgs} = require('sauce-testrunner-utils');
 
-const jestRecorder = async () => {
+const puppeteerRunner = async () => {
     const fd = fs.openSync(path.join(__dirname, '..', 'console.log'), 'w+', 0o644);
     const ws = stream.Writable({
         write(data, encoding, cb) {
@@ -35,4 +35,4 @@ const jestRecorder = async () => {
     });
 };
 
-exports.jestRecorder = jestRecorder;
+exports.puppeteerRunner = puppeteerRunner;

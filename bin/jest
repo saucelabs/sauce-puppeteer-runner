@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-const { jestRecorder } = require('../src/jest-recorder');
+const { puppeteerRunner } = require('../src/puppeteer-runner');
 
-(async () => jestRecorder())();
+(async () => puppeteerRunner())();
