@@ -1,4 +1,5 @@
 const shell = require('shelljs')
+const {loadRunConfig} = require("sauce-testrunner-utils");
 const logger = require('@wdio/logger').default
 
 const { COMMAND_TIMEOUT } = require('./constants')
@@ -8,6 +9,19 @@ const log = logger('utils')
 let lastCommand = Date.now()
 
 global.logs = []
+
+let runCfg;
+
+exports.getRunnerConfig = () => {
+    if (runCfg) {
+        return runCfg
+    }
+
+    const runCfgPath = process.env.SAUCE_RUNNER_CONFIG;
+    runCfg = loadRunConfig(runCfgPath);
+    runCfg.path = runCfgPath;
+    return runCfg
+}
 
 exports.logHelper = (...args) => {
     const sendString = 'SEND ► '

@@ -1,10 +1,11 @@
-const {HOME_DIR, PROJECT_DIR} = require('../src/constants');
-const {getSuite, loadRunConfig} = require('sauce-testrunner-utils');
+const {getRunnerConfig} = require("../src/utils");
+const {HOME_DIR, PROJECT_DIR, SUITE_NAME} = require('../src/constants');
+const {getSuite} = require('sauce-testrunner-utils');
 
-function createJestConfig(runCfgPath, suiteName) {
+function createJestConfig() {
     try {
-        const runCfg = loadRunConfig(runCfgPath);
-        const suite = getSuite(runCfg, suiteName);
+        const runCfg = getRunnerConfig();
+        const suite = getSuite(runCfg, SUITE_NAME);
 
         return {
             rootDir: PROJECT_DIR,
@@ -25,7 +26,5 @@ function createJestConfig(runCfgPath, suiteName) {
 }
 
 module.exports = async () => {
-    const runCfgPath = process.env['SAUCE_RUNNER_CONFIG']
-    const suiteName = process.env['SAUCE_SUITE']
-    return createJestConfig(runCfgPath, suiteName)
+    return createJestConfig()
 };

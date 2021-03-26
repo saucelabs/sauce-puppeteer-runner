@@ -12,6 +12,7 @@ RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/insta
 
 ENV PATH="/home/seluser/bin:/home/seluser/.nvm/versions/node/v${NODE_VERSION}/bin:${PATH}" \
     CHROME_BINARY_PATH="/usr/bin/google-chrome-stable" \
+    FIREFOX_BINARY_PATH="/usr/bin/firefox" \
     WDIO_LOG_PATH="/home/seluser/docker.log"
 
 WORKDIR /home/seluser

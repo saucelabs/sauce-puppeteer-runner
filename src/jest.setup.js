@@ -8,9 +8,11 @@ const debug = require(
         'debug'
     )
 )
-
-const { CHROME_DEFAULT_PATH, DEFAULT_JEST_TIMEOUT, CHROME_ARGS } = require('./constants')
-const { logHelper } = require('./utils')
+const {SUITE_NAME} = require("./constants");
+const {getRunnerConfig} = require("./utils");
+const {DEFAULT_JEST_TIMEOUT, CHROME_ARGS, FIREFOX_ARGS} = require('./constants')
+const {getSuite} = require('sauce-testrunner-utils');
+const {logHelper} = require('./utils')
 debug.log = logHelper
 
 const testTimeout = (parseInt(process.env.TEST_TIMEOUT) || DEFAULT_JEST_TIMEOUT)
@@ -18,15 +20,47 @@ process.stdout.write(`Setting test timeout to ${testTimeout}sec\n\n`);
 jest.setTimeout(testTimeout * 1000)
 
 beforeAll(async () => {
-    global.browser = await puppeteer.launch({
-        headless: !Boolean(process.env.DISPLAY),
-        args: CHROME_ARGS,
-        executablePath: process.env.CHROME_BINARY_PATH || CHROME_DEFAULT_PATH
-    })
+    const runCfg = getRunnerConfig();
+    const suite = getSuite(runCfg, SUITE_NAME);
+
+    const opts = getPuppeteerLaunchOptions(suite.browser)
+
+    global.browser = await puppeteer.launch(opts);
 })
 
+function getPuppeteerLaunchOptions(browser) {
+    const chromeOpts = {
+        args: CHROME_ARGS,
+        product: "chrome",
+        executablePath: process.env.CHROME_BINARY_PATH
+    }
+
+    const firefoxOpts = {
+        args: FIREFOX_ARGS,
+        product: "firefox",
+        executablePath: process.env.FIREFOX_BINARY_PATH
+    }
+
+    let opts = {
+        headless: !Boolean(process.env.DISPLAY),
+    }
+
+    switch (browser.toLowerCase()) {
+        case 'chrome':
+            opts = Object.assign(opts, chromeOpts);
+            break;
+        case 'firefox':
+            opts = Object.assign(opts, firefoxOpts);
+            break;
+        default:
+            throw new Error(`Unsupported browser: ${browser}`);
+    }
+
+    return opts
+}
+
 const monkeyPatchedTest = (origFn) => (testName, testFn) => {
-    function patchedFn (...args) {
+    function patchedFn(...args) {
         global.logs.push({
             status: 'info',
             message: testName,
@@ -34,6 +68,7 @@ const monkeyPatchedTest = (origFn) => (testName, testFn) => {
         })
         return testFn.call(this, ...args)
     }
+
     return origFn(testName, patchedFn)
 }
 
