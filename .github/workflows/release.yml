@@ -167,9 +167,7 @@ jobs:
         run: |
           npm version --no-git-tag-version ${{  steps.prep.outputs.version }}
           PUPPETEER_VER=`< package-lock.json  jq -r '.dependencies["puppeteer-core"].version'`
-          # Info: old version of the configuration. Until we move to native config, we need to provide
-          #       the actual docker tag instead of framework version.
-          sed -i "s/##VERSION##/${{steps.prep.outputs.version}}/g" .saucetpl/.sauce/config.yml
+          sed -i "s/##VERSION##/${PUPPETEER_VER}/g" .saucetpl/.sauce/config.yml
 
       - name: Archive template
         if: ${{ steps.prep.outputs.asset_id == '' }}

@@ -12,7 +12,7 @@ sauce:
     build: Release $CI_COMMIT_SHORT_SHA
 rootDir: ./
 puppeteer:
-  version: 8.0.0
+  version: ##VERSION##
 suites:
   - name: "chrome"
     testMatch: ["**/*.test.js"]
