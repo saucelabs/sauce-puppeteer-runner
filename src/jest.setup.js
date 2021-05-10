@@ -8,11 +8,11 @@ const debug = require(
         'debug'
     )
 )
-const {SUITE_NAME} = require("./constants");
-const {getRunnerConfig} = require("./utils");
-const {DEFAULT_JEST_TIMEOUT, CHROME_ARGS, FIREFOX_ARGS} = require('./constants')
-const {getSuite} = require('sauce-testrunner-utils');
-const {logHelper} = require('./utils')
+const { SUITE_NAME } = require("./constants");
+const { getRunnerConfig } = require("./utils");
+const { DEFAULT_JEST_TIMEOUT, CHROME_ARGS, FIREFOX_ARGS } = require('./constants');
+const { getSuite } = require('sauce-testrunner-utils');
+const { logHelper } = require('./utils');
 debug.log = logHelper
 
 const testTimeout = (parseInt(process.env.TEST_TIMEOUT) || DEFAULT_JEST_TIMEOUT)

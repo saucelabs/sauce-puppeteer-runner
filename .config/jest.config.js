@@ -1,11 +1,16 @@
-const {getRunnerConfig} = require("../src/utils");
-const {HOME_DIR, PROJECT_DIR, SUITE_NAME} = require('../src/constants');
-const {getSuite} = require('sauce-testrunner-utils');
+const { getRunnerConfig } = require("../src/utils");
+const { HOME_DIR, PROJECT_DIR, SUITE_NAME } = require('../src/constants');
+const { getSuite, prepareNpmEnv } = require('sauce-testrunner-utils');
 
-function createJestConfig() {
+async function createJestConfig() {
     try {
         const runCfg = getRunnerConfig();
         const suite = getSuite(runCfg, SUITE_NAME);
+
+        // Install NPM dependencies
+        let metrics = [];
+        let npmMetrics = await prepareNpmEnv(runCfg);
+        metrics.push(npmMetrics);
 
         return {
             rootDir: PROJECT_DIR,
@@ -16,7 +21,7 @@ function createJestConfig() {
             ],
             reporters: [
                 `default`,
-                `${HOME_DIR}/src/reporter.js`
+                [`${HOME_DIR}/src/reporter.js`, {metrics}],
             ],
             testMatch: suite.testMatch,
         };
@@ -26,5 +31,5 @@ function createJestConfig() {
 }
 
 module.exports = async () => {
-    return createJestConfig()
+    return await createJestConfig()
 };

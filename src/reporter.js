@@ -1,7 +1,8 @@
-const fs = require('fs')
-const path = require('path')
+const _ = require ('lodash');
+const fs = require('fs');
+const path = require('path');
 const {getRunnerConfig} = require("./utils");
-const {getSuite, loadRunConfig} = require("sauce-testrunner-utils");
+const {getSuite} = require("sauce-testrunner-utils");
 const {HOME_DIR} = require("./constants");
 
 const logger = require('@wdio/logger').default
@@ -140,8 +141,9 @@ const createJobReport = async (metadata, api, passed, startTime, endTime) => {
 };
 
 module.exports = class TestrunnerReporter {
-    constructor() {
-
+    constructor(globalConfig, options) {
+        this._globalConfig = globalConfig;
+        this._options = options;
     }
 
     async onRunStart() {
@@ -196,7 +198,18 @@ module.exports = class TestrunnerReporter {
 
         await this.stopVideo()
 
-        const assets = LOG_FILES.filter((path) => fs.existsSync(path))
+        let assets = LOG_FILES.filter((path) => fs.existsSync(path));
+
+        // Upload metrics
+        for (let [, mt] of Object.entries(this._options.metrics)) {
+            if (_.isEmpty(mt.data)) {
+                continue;
+            }
+            let mtFile = path.join(process.cwd(), '__project__', mt.name);
+            fs.writeFileSync(mtFile, JSON.stringify(mt.data, ' ', 2));
+            assets.push(mtFile);
+        }
+
 
         await api.uploadJobAssets(
             sessionId,
