@@ -95,7 +95,7 @@ jobs:
 
       - name: Get Puppeteer version
         run: |
-          PUPPETEER_VERSION=$(< package-lock.json jq -r '.dependencies["puppeteer"].version')
+          PUPPETEER_VERSION=$(< package-lock.json jq -r '.dependencies["puppeteer-core"].version')
           echo "puppeteer_version=$PUPPETEER_VERSION" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
