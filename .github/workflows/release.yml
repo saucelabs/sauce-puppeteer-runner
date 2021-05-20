@@ -93,6 +93,11 @@ jobs:
 
       - run: echo "${{ steps.prep.outputs.release_id }} - ${{  steps.prep.outputs.version }}"
 
+      - name: Get Puppeteer version
+        run: |
+          PUPPETEER_VERSION=$(< package-lock.json jq -r '.dependencies["puppeteer"].version')
+          echo "puppeteer_version=$PUPPETEER_VERSION" >> $GITHUB_ENV
+
       - uses: actions/checkout@v2
         with:
           ref: ${{ steps.prep.outputs.version }}
@@ -121,6 +126,7 @@ jobs:
             saucelabs/stt-puppeteer-jest-node:${{ steps.prep.outputs.version }}
           build-args: |
             BUILD_TAG=${{ steps.prep.outputs.version }}
+            PUPPETEER_VERSION=${{ env.puppeteer_version }}
 
   release-template-bundle:
     runs-on: ubuntu-latest
