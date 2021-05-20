@@ -19,7 +19,7 @@ WORKDIR /home/seluser
 
 COPY package.json .
 COPY package-lock.json .
-ENV PUPPETEER_VERSION=8.0.0
+ENV PUPPETEER_VERSION=9.1.1
 ENV IMAGE_NAME=saucelabs/stt-puppeteer-jest-node
 ARG BUILD_TAG
 ENV IMAGE_TAG=${BUILD_TAG}
