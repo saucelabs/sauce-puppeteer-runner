@@ -1,0 +1,28 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Validate
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  check-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Check consistency
+        run: |
+          DOCKERIMAGE_VERSION=$(grep "ENV PUPPETEER_VERSION=" Dockerfile | cut -d '=' -f 2)
+          PUPPETEER_VERSION=$(< package-lock.json jq -r '.dependencies["puppeteer"].version')
+
+          if [ "${DOCKERIMAGE_VERSION}" != "${PUPPETEER_VERSION}" ];then
+            echo "Puppeteer version in package-lock.json and Dockerfile differs."
+            exit 1
+          fi
