@@ -20,7 +20,7 @@ jobs:
       - name: Check consistency
         run: |
           DOCKERIMAGE_VERSION=$(grep "ENV PUPPETEER_VERSION=" Dockerfile | cut -d '=' -f 2)
-          PUPPETEER_VERSION=$(< package-lock.json jq -r '.dependencies["puppeteer"].version')
+          PUPPETEER_VERSION=$(< package-lock.json jq -r '.dependencies["puppeteer-core"].version')
 
           if [ "${DOCKERIMAGE_VERSION}" != "${PUPPETEER_VERSION}" ];then
             echo "Puppeteer version in package-lock.json and Dockerfile differs."
