@@ -90,7 +90,7 @@ const createJobReportV2 = async (metadata, api) => {
 
 // TODO Tian: this method is a temporary solution for creating jobs via test-composer.
 // Once the global data store is ready, this method will be deprecated.
-const createJobReport = async (metadata, api, passed, startTime, endTime) => {
+const createJobReport = async (metadata, api, passed, startTime, endTime, saucectlVersion) => {
     /**
      * don't try to create a job if no credentials are set
      */
@@ -124,7 +124,8 @@ const createJobReport = async (metadata, api, passed, startTime, endTime) => {
         build: metadata.build,
         browserName: suite.browser,
         browserVersion: browserVersion,
-        platformName: process.env.IMAGE_NAME + ':' + process.env.IMAGE_TAG
+        platformName: process.env.IMAGE_NAME + ':' + process.env.IMAGE_TAG,
+        saucectlVersion: saucectlVersion,
     };
 
     let sessionId;
@@ -185,7 +186,7 @@ module.exports = class TestrunnerReporter {
         if (process.env.ENABLE_DATA_STORE) {
             sessionId = await createJobReportV2(runCfg.sauce.metadata, api)
         } else {
-            sessionId = await createJobReport(runCfg.sauce.metadata, api, hasPassed, startTime, endTime)
+            sessionId = await createJobReport(runCfg.sauce.metadata, api, hasPassed, startTime, endTime, runCfg.saucectlVersion)
         }
 
         /**
