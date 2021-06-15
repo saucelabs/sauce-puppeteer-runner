@@ -186,7 +186,7 @@ module.exports = class TestrunnerReporter {
         if (process.env.ENABLE_DATA_STORE) {
             sessionId = await createJobReportV2(runCfg.sauce.metadata, api)
         } else {
-            sessionId = await createJobReport(runCfg.sauce.metadata, api, hasPassed, startTime, endTime, runCfg.saucectlVersion)
+            sessionId = await createJobReport(runCfg.sauce.metadata, api, hasPassed, startTime, endTime, process.env.SAUCE_SAUCECTL_VERSION)
         }
 
         /**
