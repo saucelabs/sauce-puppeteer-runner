@@ -4,7 +4,6 @@ sauce:
   region: us-west-1
   concurrency: 2
   metadata:
-    name: Testing Puppeteer Support
     tags:
       - e2e
       - release team
