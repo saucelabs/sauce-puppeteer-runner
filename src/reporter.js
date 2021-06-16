@@ -27,8 +27,6 @@ const api = new SauceLabs({
     tld
 })
 
-// SAUCE_JOB_NAME is only available for saucectl >= 0.16, hence the fallback
-const jobName = process.env.SAUCE_JOB_NAME || `DevX Puppeteer Test Run - ${(new Date()).getTime()}`;
 let startTime, endTime;
 
 const runCfg = getRunnerConfig();
@@ -39,7 +37,7 @@ const suite = getSuite(runCfg, SUITE_NAME);
 // Keep these pieces of code for future integration.
 const createJobReportV2 = async (metadata, api) => {
     const body = {
-        name: jobName,
+        name: SUITE_NAME,
         acl: [
             {
                 type: 'username',
@@ -111,13 +109,14 @@ const createJobReport = async (metadata, api, passed, startTime, endTime, saucec
     }
 
     const body = {
-        name: jobName,
+        name: SUITE_NAME,
         user: process.env.SAUCE_USERNAME,
         startTime,
         endTime,
         framework: 'puppeteer',
         frameworkVersion: process.env.PUPPETEER_VERSION,
         status: 'complete',
+        suite: SUITE_NAME,
         errors: [],
         passed,
         tags: metadata.tags,
