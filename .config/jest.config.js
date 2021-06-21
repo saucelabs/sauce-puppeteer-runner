@@ -21,7 +21,8 @@ async function createJestConfig() {
             ],
             reporters: [
                 `default`,
-                [`${HOME_DIR}/src/reporter.js`, {metrics}],
+                [ "jest-junit", {outputName: "junit.xml"} ],
+                [ `${HOME_DIR}/src/reporter.js`, {metrics} ],
             ],
             testMatch: suite.testMatch,
         };
