@@ -9,6 +9,7 @@ exports.LOG_FILES = [
     exports.HOME_DIR + '/videos/video.mp4',
     exports.HOME_DIR + '/docker.log',
     exports.HOME_DIR + '/console.log',
+    exports.HOME_DIR + '/junit.xml',
 ]
 
 exports.CHROME_ARGS = [
