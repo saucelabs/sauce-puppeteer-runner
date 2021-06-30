@@ -4,6 +4,7 @@ const path = require('path');
 const {getRunnerConfig} = require("./utils");
 const {getSuite} = require("sauce-testrunner-utils");
 const {HOME_DIR} = require("./constants");
+const convert = require('xml-js');
 
 const logger = require('@wdio/logger').default
 const SauceLabs = require('saucelabs').default
@@ -12,7 +13,7 @@ const {exec} = require('./utils')
 const {LOG_FILES, SUITE_NAME} = require('./constants')
 
 const log = logger('reporter')
-const {updateExportedValue} = require('sauce-testrunner-utils').saucectl
+const {updateExportedValue} = require('sauce-testrunner-utils').saucectl;
 
 // Path has to match the value of the Dockerfile label com.saucelabs.job-info !
 const SAUCECTL_OUTPUT_FILE = '/tmp/output.json';
@@ -140,6 +141,55 @@ const createJobReport = async (metadata, api, passed, startTime, endTime, saucec
     return sessionId || 0;
 };
 
+const generateJunitFile = () => {
+    let result;
+    let opts = {compact: true, spaces: 4};
+    try {
+        const xmlData = fs.readFileSync(path.join(HOME_DIR, "junit.xml"), 'utf8');
+        result = convert.xml2js(xmlData, opts);
+    } catch (err) {
+        console.error(err);
+    }
+
+    let totalSkipped = 0;
+    result.testsuites._attributes.name = SUITE_NAME;
+    let property = [
+        {
+            _attributes: {
+                name: 'platformName',
+                value: process.platform,
+            }
+        },
+        {
+            _attributes: {
+                name: 'browserName',
+                value: suite.browser,
+            }
+        }
+    ];
+    if (Array.isArray(result.testsuites.testsuite)) {
+        for (let i = 0; i < result.testsuites.testsuite.length; i++) {
+            totalSkipped += +result.testsuites.testsuite[i]._attributes.skipped || 0;
+            result.testsuites.testsuite[i]._attributes.id = i;
+            result.testsuites.testsuite[i].properties = {};
+            result.testsuites.testsuite[i].properties.property = property;
+        }
+        result.testsuites._attributes.skipped = totalSkipped;
+    } else {
+        result.testsuites.testsuite._attributes.id = 0;
+        result.testsuites.testsuite.properties = {};
+        result.testsuites.testsuite.properties.property = property;
+        result.testsuites._attributes.skipped = result.testsuites.testsuite._attributes.skipped;
+    }
+
+    try {
+        let xmlResult = convert.js2xml(result, opts);
+        fs.writeFileSync(path.join(HOME_DIR, 'junit.xml'), xmlResult);
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 module.exports = class TestrunnerReporter {
     constructor(globalConfig, options) {
         this._globalConfig = globalConfig;
@@ -197,6 +247,8 @@ module.exports = class TestrunnerReporter {
         }
 
         await this.stopVideo()
+
+        generateJunitFile();
 
         let assets = LOG_FILES.filter((path) => fs.existsSync(path));
 
