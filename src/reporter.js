@@ -18,7 +18,13 @@ const {updateExportedValue} = require('sauce-testrunner-utils').saucectl;
 // Path has to match the value of the Dockerfile label com.saucelabs.job-info !
 const SAUCECTL_OUTPUT_FILE = '/tmp/output.json';
 
-const region = process.env.SAUCE_REGION || 'us-west-1'
+let startTime, endTime;
+
+const runCfg = getRunnerConfig();
+const { sauce = {} } = runCfg;
+const suite = getSuite(runCfg, SUITE_NAME);
+
+const region = sauce.region || 'us-west-1'
 const tld = region === 'staging' ? 'net' : 'com'
 
 const api = new SauceLabs({
@@ -28,10 +34,7 @@ const api = new SauceLabs({
     tld
 })
 
-let startTime, endTime;
 
-const runCfg = getRunnerConfig();
-const suite = getSuite(runCfg, SUITE_NAME);
 
 // NOTE: this function is not available currently.
 // It will be ready once data store API actually works.
