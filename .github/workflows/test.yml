@@ -27,7 +27,7 @@ jobs:
 
       - name: Run tests
         working-directory: tests/e2e/
-        run: saucectl run --test-env docker
+        run: saucectl run
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
