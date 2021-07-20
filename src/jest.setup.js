@@ -23,7 +23,8 @@ beforeAll(async () => {
     const runCfg = getRunnerConfig();
     const suite = getSuite(runCfg, SUITE_NAME);
 
-    const opts = getPuppeteerLaunchOptions(suite.browser)
+    let opts = getPuppeteerLaunchOptions(suite.browser)
+    opts.args.push(...suite.browserArgs || []);
 
     global.browser = await puppeteer.launch(opts);
 })
