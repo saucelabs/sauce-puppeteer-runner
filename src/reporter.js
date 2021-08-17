@@ -186,6 +186,15 @@ const generateJunitFile = () => {
     }
 
     try {
+        opts.textFn = (val) => val.replace(/[<>&'"]/g, function (c) {
+            switch (c) {
+              case '<': return '&lt;';
+              case '>': return '&gt;';
+              case '&': return '&amp;';
+              case '\'': return '&apos;';
+              case '"': return '&quot;';
+            }
+        });
         let xmlResult = convert.js2xml(result, opts);
         fs.writeFileSync(path.join(HOME_DIR, 'junit.xml'), xmlResult);
     } catch (err) {
