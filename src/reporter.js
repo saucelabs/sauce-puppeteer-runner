@@ -2,7 +2,7 @@ const _ = require ('lodash');
 const fs = require('fs');
 const path = require('path');
 const {getRunnerConfig} = require("./utils");
-const {getSuite} = require("sauce-testrunner-utils");
+const {getSuite, escapeXML} = require("sauce-testrunner-utils");
 const {HOME_DIR} = require("./constants");
 const convert = require('xml-js');
 
@@ -186,15 +186,7 @@ const generateJunitFile = () => {
     }
 
     try {
-        opts.textFn = (val) => val.replace(/[<>&'"]/g, function (c) {
-            switch (c) {
-              case '<': return '&lt;';
-              case '>': return '&gt;';
-              case '&': return '&amp;';
-              case '\'': return '&apos;';
-              case '"': return '&quot;';
-            }
-        });
+        opts.textFn = escapeXML;
         let xmlResult = convert.js2xml(result, opts);
         fs.writeFileSync(path.join(HOME_DIR, 'junit.xml'), xmlResult);
     } catch (err) {
