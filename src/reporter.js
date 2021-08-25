@@ -176,13 +176,41 @@ const generateJunitFile = () => {
             result.testsuites.testsuite[i]._attributes.id = i;
             result.testsuites.testsuite[i].properties = {};
             result.testsuites.testsuite[i].properties.property = property;
-        }
+            const testsuite = result.testsuites.testsuite[i];
+            if (!Array.isArray(testsuite.testcase)) {
+                result.testsuites.testsuite[i].testcase = [testsuite.testcase];
+            }
+            for (let j = 0; j < testsuite.testcase.length; j++) {
+                const testcase = testsuite.testcase[j];
+                if (testcase.failure) {
+                    result.testsuites.testsuite[i].testcase[j].failure._attributes = testcase.failure._attributes || {};
+                    result.testsuites.testsuite[i].testcase[j].failure._cdata = escapeXML(testcase.failure._text || '');
+                    result.testsuites.testsuite[i].testcase[j].failure._attributes.type = testcase.failure._attributes.type || '';
+                    result.testsuites.testsuite[i].testcase[j].failure._attributes.message = testcase.failure._attributes.message || '';
+                    delete result.testsuites.testsuite[i].testcase[j].failure._text;
+                }
+            }
+       }
         result.testsuites._attributes.skipped = totalSkipped;
     } else {
         result.testsuites.testsuite._attributes.id = 0;
         result.testsuites.testsuite.properties = {};
         result.testsuites.testsuite.properties.property = property;
         result.testsuites._attributes.skipped = result.testsuites.testsuite._attributes.skipped;
+        const testsuite = result.testsuites.testsuite;
+        if (!Array.isArray(testsuite.testcase)) {
+            result.testsuites.testsuite.testcase = [testsuite.testcase];
+        }
+        for (let j = 0; j < testsuite.testcase.length; j++) {
+            const testcase = testsuite.testcase[j];
+            if (testcase.failure) {
+                result.testsuites.testsuite.testcase[j].failure._attributes = testcase.failure._attributes || {};
+                result.testsuites.testsuite.testcase[j].failure._cdata = escapeXML(testcase.failure._text || '');
+                result.testsuites.testsuite.testcase[j].failure._attributes.type = testcase.failure._attributes.type || '';
+                result.testsuites.testsuite.testcase[j].failure._attributes.message = testcase.failure._attributes.message || '';
+                delete result.testsuites.testsuite.testcase[j].failure._text;
+            }
+        }
     }
 
     try {
