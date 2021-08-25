@@ -154,7 +154,6 @@ const generateJunitFile = () => {
         console.error(err);
     }
 
-    let totalSkipped = 0;
     result.testsuites._attributes.name = SUITE_NAME;
     let property = [
         {
@@ -170,21 +169,32 @@ const generateJunitFile = () => {
             }
         }
     ];
-    if (Array.isArray(result.testsuites.testsuite)) {
-        for (let i = 0; i < result.testsuites.testsuite.length; i++) {
-            totalSkipped += +result.testsuites.testsuite[i]._attributes.skipped || 0;
-            result.testsuites.testsuite[i]._attributes.id = i;
-            result.testsuites.testsuite[i].properties = {};
-            result.testsuites.testsuite[i].properties.property = property;
-        }
-        result.testsuites._attributes.skipped = totalSkipped;
-    } else {
-        result.testsuites.testsuite._attributes.id = 0;
-        result.testsuites.testsuite.properties = {};
-        result.testsuites.testsuite.properties.property = property;
-        result.testsuites._attributes.skipped = result.testsuites.testsuite._attributes.skipped;
-    }
 
+    if (!Array.isArray(result.testsuites.testsuite)) {
+        result.testsuites.testsuite = [result.testsuites.testsuite];
+    }
+    let totalSkipped = 0;
+    for (let i = 0; i < result.testsuites.testsuite.length; i++) {
+        totalSkipped += +result.testsuites.testsuite[i]._attributes.skipped || 0;
+        result.testsuites.testsuite[i]._attributes.id = i;
+        result.testsuites.testsuite[i].properties = {};
+        result.testsuites.testsuite[i].properties.property = property;
+        const testsuite = result.testsuites.testsuite[i];
+        if (!Array.isArray(testsuite.testcase)) {
+            result.testsuites.testsuite[i].testcase = [testsuite.testcase];
+        }
+        for (let j = 0; j < testsuite.testcase.length; j++) {
+            const testcase = testsuite.testcase[j];
+            if (testcase.failure) {
+                result.testsuites.testsuite[i].testcase[j].failure._attributes = testcase.failure._attributes || {};
+                result.testsuites.testsuite[i].testcase[j].failure._cdata = escapeXML(testcase.failure._text || '');
+                result.testsuites.testsuite[i].testcase[j].failure._attributes.type = testcase.failure._attributes.type || '';
+                result.testsuites.testsuite[i].testcase[j].failure._attributes.message = testcase.failure._attributes.message || '';
+                delete result.testsuites.testsuite[i].testcase[j].failure._text;
+            }
+        }
+    }
+    result.testsuites._attributes.skipped = totalSkipped;
     try {
         opts.textFn = escapeXML;
         let xmlResult = convert.js2xml(result, opts);
