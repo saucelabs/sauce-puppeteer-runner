@@ -175,6 +175,9 @@ const generateJunitFile = () => {
     }
     let totalSkipped = 0;
     for (let i = 0; i < result.testsuites.testsuite.length; i++) {
+        if (result.testsuites.testsuite[i] === undefined) {
+            continue;
+        }
         totalSkipped += +result.testsuites.testsuite[i]._attributes.skipped || 0;
         result.testsuites.testsuite[i]._attributes.id = i;
         result.testsuites.testsuite[i].properties = {};

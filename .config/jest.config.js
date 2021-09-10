@@ -25,6 +25,7 @@ async function createJestConfig() {
                 [ `${HOME_DIR}/src/reporter.js`, {metrics} ],
             ],
             testMatch: suite.testMatch,
+            runner: "groups"
         };
     } catch (e) {
         console.error(`Failed to prepare jest configuration. Reason: ${e.message}`);
