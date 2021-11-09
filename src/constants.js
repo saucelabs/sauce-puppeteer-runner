@@ -1,7 +1,7 @@
 exports.HOME_DIR = process.env.TEST_HOME_DIR || '/home/seluser'
 exports.PROJECT_DIR = process.env.SAUCE_PROJECT_DIR
 exports.CHROME_DEFAULT_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-exports.DEFAULT_JEST_TIMEOUT = 60 // 1min
+exports.DEFAULT_JEST_TIMEOUT = 1800 // 30min
 exports.COMMAND_TIMEOUT = 10 * 1000 // 10s
 exports.SUITE_NAME = process.env.SAUCE_SUITE
 
