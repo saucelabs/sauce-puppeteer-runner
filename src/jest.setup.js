@@ -15,14 +15,13 @@ const { getSuite } = require('sauce-testrunner-utils');
 const { logHelper } = require('./utils');
 debug.log = logHelper
 
-const testTimeout = (parseInt(process.env.TEST_TIMEOUT) || DEFAULT_JEST_TIMEOUT)
+const runCfg = getRunnerConfig();
+const suite = getSuite(runCfg, SUITE_NAME);
+const testTimeout = (suite.timeout / 1000000000 || parseInt(process.env.TEST_TIMEOUT) || DEFAULT_JEST_TIMEOUT)
 process.stdout.write(`Setting test timeout to ${testTimeout}sec\n\n`);
 jest.setTimeout(testTimeout * 1000)
 
 beforeAll(async () => {
-    const runCfg = getRunnerConfig();
-    const suite = getSuite(runCfg, SUITE_NAME);
-
     let opts = getPuppeteerLaunchOptions(suite.browser)
     opts.args.push(...suite.browserArgs || []);
 
