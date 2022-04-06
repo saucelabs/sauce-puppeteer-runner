@@ -150,60 +150,57 @@ const generateJunitFile = () => {
     try {
         const xmlData = fs.readFileSync(path.join(HOME_DIR, "junit.xml"), 'utf8');
         result = convert.xml2js(xmlData, opts);
-    } catch (err) {
-        console.error(err);
-    }
 
-    result.testsuites._attributes.name = SUITE_NAME;
-    let property = [
-        {
-            _attributes: {
-                name: 'platformName',
-                value: process.platform,
+        result.testsuites._attributes.name = SUITE_NAME;
+        let property = [
+            {
+                _attributes: {
+                    name: 'platformName',
+                    value: process.platform,
+                }
+            },
+            {
+                _attributes: {
+                    name: 'browserName',
+                    value: suite.browser,
+                }
             }
-        },
-        {
-            _attributes: {
-                name: 'browserName',
-                value: suite.browser,
-            }
-        }
-    ];
+        ];
 
-    if (!Array.isArray(result.testsuites.testsuite)) {
-        result.testsuites.testsuite = [result.testsuites.testsuite];
-    }
-    let totalSkipped = 0;
-    for (let i = 0; i < result.testsuites.testsuite.length; i++) {
-        if (result.testsuites.testsuite[i] === undefined) {
-            continue;
+        if (!Array.isArray(result.testsuites.testsuite)) {
+            result.testsuites.testsuite = [result.testsuites.testsuite];
         }
-        totalSkipped += +result.testsuites.testsuite[i]._attributes.skipped || 0;
-        result.testsuites.testsuite[i]._attributes.id = i;
-        result.testsuites.testsuite[i].properties = {};
-        result.testsuites.testsuite[i].properties.property = property;
-        const testsuite = result.testsuites.testsuite[i];
-        if (!Array.isArray(testsuite.testcase)) {
-            result.testsuites.testsuite[i].testcase = [testsuite.testcase];
-        }
-        for (let j = 0; j < testsuite.testcase.length; j++) {
-            const testcase = testsuite.testcase[j];
-            if (testcase.failure) {
-                result.testsuites.testsuite[i].testcase[j].failure._attributes = testcase.failure._attributes || {};
-                result.testsuites.testsuite[i].testcase[j].failure._cdata = escapeXML(testcase.failure._text || '');
-                result.testsuites.testsuite[i].testcase[j].failure._attributes.type = testcase.failure._attributes.type || '';
-                result.testsuites.testsuite[i].testcase[j].failure._attributes.message = testcase.failure._attributes.message || '';
-                delete result.testsuites.testsuite[i].testcase[j].failure._text;
+        let totalSkipped = 0;
+        for (let i = 0; i < result.testsuites.testsuite.length; i++) {
+            if (result.testsuites.testsuite[i] === undefined) {
+                continue;
+            }
+            totalSkipped += +result.testsuites.testsuite[i]._attributes.skipped || 0;
+            result.testsuites.testsuite[i]._attributes.id = i;
+            result.testsuites.testsuite[i].properties = {};
+            result.testsuites.testsuite[i].properties.property = property;
+            const testsuite = result.testsuites.testsuite[i];
+            if (!Array.isArray(testsuite.testcase)) {
+                result.testsuites.testsuite[i].testcase = [testsuite.testcase];
+            }
+            for (let j = 0; j < testsuite.testcase.length; j++) {
+                const testcase = testsuite.testcase[j];
+                if (testcase.failure) {
+                    result.testsuites.testsuite[i].testcase[j].failure._attributes = testcase.failure._attributes || {};
+                    result.testsuites.testsuite[i].testcase[j].failure._cdata = escapeXML(testcase.failure._text || '');
+                    result.testsuites.testsuite[i].testcase[j].failure._attributes.type = testcase.failure._attributes.type || '';
+                    result.testsuites.testsuite[i].testcase[j].failure._attributes.message = testcase.failure._attributes.message || '';
+                    delete result.testsuites.testsuite[i].testcase[j].failure._text;
+                }
             }
         }
-    }
-    result.testsuites._attributes.skipped = totalSkipped;
-    try {
+        result.testsuites._attributes.skipped = totalSkipped;
+
         opts.textFn = escapeXML;
         let xmlResult = convert.js2xml(result, opts);
         fs.writeFileSync(path.join(HOME_DIR, 'junit.xml'), xmlResult);
     } catch (err) {
-        console.error(err);
+        console.error('failed to generate junit file:', err);
     }
 };
 
