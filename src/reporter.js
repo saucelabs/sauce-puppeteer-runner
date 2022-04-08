@@ -145,44 +145,52 @@ const createJobReport = async (metadata, api, passed, startTime, endTime, saucec
 };
 
 const generateJunitFile = () => {
-    let result;
     let opts = {compact: true, spaces: 4};
-    try {
-        const xmlData = fs.readFileSync(path.join(HOME_DIR, "junit.xml"), 'utf8');
-        result = convert.xml2js(xmlData, opts);
-    } catch (err) {
-        console.error(err);
+    const xmlData = fs.readFileSync(path.join(HOME_DIR, "junit.xml"), 'utf8');
+    let result = convert.xml2js(xmlData, opts);
+    if (!result.testsuites || !result.testsuites.testsuite) {
+        return;
     }
 
+    result.testsuites._attributes = result.testsuites._attributes || {};
     result.testsuites._attributes.name = SUITE_NAME;
-    let property = [
-        {
-            _attributes: {
-                name: 'platformName',
-                value: process.platform,
-            }
-        },
-        {
-            _attributes: {
-                name: 'browserName',
-                value: suite.browser,
-            }
-        }
-    ];
 
     if (!Array.isArray(result.testsuites.testsuite)) {
         result.testsuites.testsuite = [result.testsuites.testsuite];
     }
     let totalSkipped = 0;
     for (let i = 0; i < result.testsuites.testsuite.length; i++) {
-        if (result.testsuites.testsuite[i] === undefined) {
+        const testsuite = result.testsuites.testsuite[i];
+        if (testsuite === undefined) {
             continue;
         }
-        totalSkipped += +result.testsuites.testsuite[i]._attributes.skipped || 0;
+
+        // _attributes
+        result.testsuites.testsuite[i]._attributes = testsuite._attributes || {};
         result.testsuites.testsuite[i]._attributes.id = i;
-        result.testsuites.testsuite[i].properties = {};
-        result.testsuites.testsuite[i].properties.property = property;
-        const testsuite = result.testsuites.testsuite[i];
+        totalSkipped += +testsuite._attributes.skipped || 0;
+
+        // properties
+        result.testsuites.testsuite[i].properties = {
+            property: [
+                {
+                    _attributes: {
+                        name: 'platformName',
+                        value: process.platform,
+                    }
+                },
+                {
+                    _attributes: {
+                        name: 'browserName',
+                        value: suite.browser,
+                    }
+                }
+            ]
+        };
+        // testcase
+        if (!testsuite.testcase) {
+            continue;
+        }
         if (!Array.isArray(testsuite.testcase)) {
             result.testsuites.testsuite[i].testcase = [testsuite.testcase];
         }
@@ -198,13 +206,10 @@ const generateJunitFile = () => {
         }
     }
     result.testsuites._attributes.skipped = totalSkipped;
-    try {
-        opts.textFn = escapeXML;
-        let xmlResult = convert.js2xml(result, opts);
-        fs.writeFileSync(path.join(HOME_DIR, 'junit.xml'), xmlResult);
-    } catch (err) {
-        console.error(err);
-    }
+
+    opts.textFn = escapeXML;
+    let xmlResult = convert.js2xml(result, opts);
+    fs.writeFileSync(path.join(HOME_DIR, 'junit.xml'), xmlResult);
 };
 
 module.exports = class TestrunnerReporter {
@@ -265,7 +270,11 @@ module.exports = class TestrunnerReporter {
 
         await this.stopVideo()
 
-        generateJunitFile();
+        try {
+            generateJunitFile();
+        } catch (err) {
+            console.error(`failed to generate junit file:, ${err}`);
+        }
 
         let assets = LOG_FILES.filter((path) => fs.existsSync(path));
 
