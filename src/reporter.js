@@ -145,10 +145,9 @@ const createJobReport = async (metadata, api, passed, startTime, endTime, saucec
 };
 
 const generateJunitFile = () => {
-    let result;
     let opts = {compact: true, spaces: 4};
     const xmlData = fs.readFileSync(path.join(HOME_DIR, "junit.xml"), 'utf8');
-    result = convert.xml2js(xmlData, opts);
+    let result = convert.xml2js(xmlData, opts);
     if (!result.testsuites || !result.testsuites.testsuite) {
         return;
     }
@@ -162,14 +161,16 @@ const generateJunitFile = () => {
     let totalSkipped = 0;
     for (let i = 0; i < result.testsuites.testsuite.length; i++) {
         const testsuite = result.testsuites.testsuite[i];
-        if (testsuite === undefined ) {
+        if (testsuite === undefined) {
             continue;
         }
+
         // _attributes
         result.testsuites.testsuite[i]._attributes = testsuite._attributes || {};
         result.testsuites.testsuite[i]._attributes.id = i;
         totalSkipped += +testsuite._attributes.skipped || 0;
-        // property
+
+        // properties
         result.testsuites.testsuite[i].properties = {
             property: [
                 {
