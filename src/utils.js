@@ -24,7 +24,7 @@ exports.getRunnerConfig = () => {
 }
 
 exports.logHelper = (...args) => {
-    const sendString = 'SEND ► '
+    const sendString = 'SEND ► ['
     const receiveString = '◀ RECV'
 
     if (args[0].includes(receiveString)) {
@@ -53,8 +53,12 @@ exports.logHelper = (...args) => {
         return
     }
 
-    const line = args[0].slice(args[0].indexOf(sendString) + sendString.length)
-    const command = JSON.parse(line)
+    // It extracts sent command in the args[0] like
+    // 2022-06-03T00:16:49.613Z puppeteer:protocol:SEND ► [
+    //  '{"sessionId":"ea27a779-42d2-4c8c-9dac-10634741a60e","method":"Runtime.callFunctionOn"}'
+    //]
+    const line = args[0].slice(args[0].indexOf(sendString) + sendString.length).replace(/\n/g, '').trim()
+    const command = JSON.parse(line.substring(1, line.length-2))
     const duration = (Date.now() - lastCommand) / 1000
     global.logs.push({
         id: command.id,
