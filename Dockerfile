@@ -1,4 +1,4 @@
-FROM saucelabs/testrunner-image:v0.3.0
+FROM saucelabs/testrunner-image:v0.4.0
 
 #================
 # Install Node.JS
