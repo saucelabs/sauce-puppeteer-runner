@@ -1,13 +1,8 @@
 const path = require('path')
 
 const puppeteer = require('puppeteer-core')
-const debug = require(
-    path.join(
-        path.dirname(require.resolve('puppeteer-core')),
-        'node_modules',
-        'debug'
-    )
-)
+
+const debug = require('puppeteer-core/node_modules/debug');
 const { SUITE_NAME } = require("./constants");
 const { getRunnerConfig } = require("./utils");
 const { DEFAULT_JEST_TIMEOUT, CHROME_ARGS, FIREFOX_ARGS } = require('./constants');
