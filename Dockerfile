@@ -3,7 +3,7 @@ FROM saucelabs/testrunner-image:v0.4.0
 #================
 # Install Node.JS
 #================
-ENV NODE_VERSION=12.16.2
+ENV NODE_VERSION=16.17.0
 ENV NVM_VERSION=0.35.3
 RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh | bash \
   && export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")" \
