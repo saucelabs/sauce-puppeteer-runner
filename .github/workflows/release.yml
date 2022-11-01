@@ -47,7 +47,7 @@ jobs:
         if: ${{ steps.prep.outputs.tag_name == '' }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
       - name: Setup Git
