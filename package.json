@@ -42,7 +42,7 @@
     "@types/node": "^16.11.7",
     "@types/puppeteer": "^5.4.4",
     "@types/puppeteer-core": "^5.4.0",
-    "release-it": "^14.4.1",
+    "release-it": "^15.6.0",
     "typescript": "^3.9.7"
   }
 }
