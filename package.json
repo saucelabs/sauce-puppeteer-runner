@@ -30,10 +30,10 @@
     "js-yaml": "3.14.0",
     "lodash": "4.17.21",
     "puppeteer-core": "17.0.0",
-    "sauce-testrunner-utils": "0.5.0",
+    "sauce-testrunner-utils": "1.2.0",
     "saucelabs": "7.2.0",
     "shelljs": "0.8.5",
-    "webdriverio": "5.21.0",
+    "webdriverio": "8.11.3",
     "xml-js": "1.6.11"
   },
   "devDependencies": {
